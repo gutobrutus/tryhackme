@@ -170,3 +170,124 @@ Para responder a questão ***f***, localize na saída da execução do LinEnum.s
 -rw-r----- 1 root shadow 2359 Mar  6  2020 /etc/shadow
 ```
 - g. ***Well done! Bear the results of the enumeration stage in mind as we continue to exploit the system!***: *Não há necessidade de resposta*
+
+## Abusing SUID/GUID Files
+
+Pode-se dizer que o primeiro passo para elevação de privilégios é buscar por arquivos que tenham setado o bit SUID/GUID. Esses arquivos podem permitir executar com permissões de owner/group, que por vezes, oferecem elevação de privilégios, como de superusuário.
+
+### O que é um binário com SUID?
+
+Em ambientes Linux, tudo são arquivos, incluindo diretorios e dispositivos. Esses elementos possuem permissões que são configuradas em três aspectos: leitura, gravação e execução (read, write e execute - rwx). Isso é usado para restringir ou liberar.
+
+Essas permissões básicas podem ser indicadas por meio de letras ou números:
+
+```
+r = read
+
+w = write
+
+x = execute
+
+    user     group     others
+
+    rwx       rwx       rwx
+
+    421       421       421
+
+```
+
+Conforme ilustrado acima, existem três grupos de permissão: user (owner), group e others.
+
+O número máximo de bits que pode ser usado para definir a permissão para cada usuário é 7, que é uma combinação da operação de leitura (4), gravação (2) e execução (1). Por exemplo, se você definir permissões usando "chmod" como 755, será: rwxr-xr-x.
+
+Mas quando uma permissão especial é dada a cada usuário, ela se torna SUID ou SGID. Quando o bit extra “4” é definido como usuário (Proprietário), ele se torna SUID (Definir ID do usuário) e quando o bit “2” é definido como grupo, ele se torna SGID (Definir ID do grupo).
+
+Portanto, as permissões a serem procuradas ao buscar por SUID são:
+
+```
+SUID:
+
+rws-rwx-rwx
+
+GUID:
+
+rwx-rws-rwx
+```
+
+No estágio de enumeration, executado com o script LinEnum, já é possível identificar os arquivos com essa permissão especial. Entretanto, Para localizar arquivos com essas permissões especiais, pode-se utilizar, também, o comando find, conforme abaixo:
+
+```shell
+find / -perm -u=s -type f 2>/dev/null
+```
+Alguns esclarecimentos:
+- **find** - Inicia o comando "find"
+
+- **/** - Pesquisa em todo o sistema de arquivos
+
+- **-perm** - procura por arquivos com permissões específicas
+
+- **-u=s** - Qualquer um dos modos de bits de permissão é definido para o arquivo. Modos simbólicos são aceitos nesta forma
+
+- **-type f** - Procura apenas por arquivos
+
+- **2>/dev/null** - Suprime erros
+
+Se quiser passar para o comando ***ls*** a saída do comando anterior, para melhor exibição:
+
+```shell
+find / -perm -u=s -type f -exec ls -l {} \; 2>/dev/null
+```
+Execução no host alvo:
+
+```shell
+user3@polobox:~$ find / -perm -u=s -type f -exec ls -l {} \; 2>/dev/null
+-rwsr-xr-x 1 root root 113336 Apr 25  2019 /sbin/mount.nfs
+-rwsr-xr-x 1 root root 18400 Sep 25  2017 /sbin/mount.ecryptfs_private
+-rwsr-xr-x 1 root root 35600 Mar 29  2018 /sbin/mount.cifs
+-rwsr-xr-- 1 root dip 378600 Jun 12  2018 /usr/sbin/pppd
+-rwsr-xr-x 1 root root 75824 Jan 25  2018 /usr/bin/gpasswd
+-rwsr-xr-x 1 root root 22520 Jan 15  2019 /usr/bin/pkexec
+-rwsr-xr-x 1 root root 44528 Jan 25  2018 /usr/bin/chsh
+-rwsr-xr-x 1 root root 59640 Jan 25  2018 /usr/bin/passwd
+-rwsr-xr-x 1 root root 18448 Mar  9  2017 /usr/bin/traceroute6.iputils
+-rwsr-xr-x 1 root root 76496 Jan 25  2018 /usr/bin/chfn
+-rwsr-xr-x 1 root root 22528 Mar  9  2017 /usr/bin/arping
+-rwsr-xr-x 1 root root 40344 Jan 25  2018 /usr/bin/newgrp
+-rwsr-xr-x 1 root root 149080 Jan 17  2018 /usr/bin/sudo
+-rwsr-sr-x 1 root root 10232 Oct 25  2018 /usr/lib/xorg/Xorg.wrap
+-rwsr-xr-x 1 root root 10232 Mar 28  2017 /usr/lib/eject/dmcrypt-get-device
+-rwsr-xr-x 1 root root 14328 Jan 15  2019 /usr/lib/policykit-1/polkit-agent-helper-1
+-rwsr-xr-x 1 root root 436552 Mar  4  2019 /usr/lib/openssh/ssh-keysign
+-rwsr-xr-- 1 root messagebus 42992 Nov 15  2017 /usr/lib/dbus-1.0/dbus-daemon-launch-helper
+-rwsr-xr-x 1 root root 64424 Mar  9  2017 /bin/ping
+-rwsr-xr-x 1 root root 44664 Jan 25  2018 /bin/su
+-rwsr-xr-x 1 root root 146128 Nov 30  2017 /bin/ntfs-3g
+-rwsr-xr-x 1 root root 43088 Oct 15  2018 /bin/mount
+-rwsr-xr-x 1 root root 26696 Oct 15  2018 /bin/umount
+-rwsr-xr-x 1 root root 30800 Aug 11  2016 /bin/fusermount
+-rwsr-xr-x 1 root root 8392 Jun  4  2019 /home/user5/script
+-rwsr-xr-x 1 root root 8392 Jun  4  2019 /home/user3/shell
+```
+
+### Questões:
+
+- a. ***What is the path of the file in user3's directory that stands out to you?***: /home/user3/shell
+
+- b. ***We can do this by running: "./shell"***: *Não há necessidade de resposta*
+
+- c. ***Congratulations! You should now have a shell as root user, well done!***: *Não há necessidade de resposta*
+
+Quando executa-se o script shell, obtém-se um shell de root:
+
+```shell
+user3@polobox:~$ ./shell 
+You Can't Find Me
+Welcome to Linux Lite 4.4 user3
+ 
+Monday 11 July 2022, 07:27:54
+Memory Usage: 332/1991MB (16.68%)
+Disk Usage: 6/217GB (3%)
+Support - https://www.linuxliteos.com/forums/ (Right click, Open Link)
+ 
+root@polobox:~# 
+```
