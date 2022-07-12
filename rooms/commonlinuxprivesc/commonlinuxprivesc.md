@@ -291,3 +291,60 @@ Support - https://www.linuxliteos.com/forums/ (Right click, Open Link)
  
 root@polobox:~# 
 ```
+
+## Exploiting a writable /etc/passwd
+
+A partir da enumeração de usuários, constata-se que o user7 é um membro do grupo root com gid 0. Sabe-se, também, pela varredura do LinEnum que o arquivo /etc/passwd é gravável para o usuário. Portanto, a partir dessa observação, conclui-se que o user7 pode editar o arquivo /etc/passwd.
+
+```shell
+user3@polobox:~$ cat /etc/passwd | grep user7
+user7:x:1006:0:user7,,,:/home/user7:/bin/bash
+user3@polobox:~$ ls -l /etc/passwd
+-rw-rw-r-- 1 root root 2694 Mar  6  2020 /etc/passwd
+```
+### Entendendo melhor o /etc/passwd
+
+O arquivo /etc/passwd armazena informações essenciais, que são necessárias durante o login. Em outras palavras, ele armazena informações da conta do usuário. O /etc/passwd é um arquivo de texto simples. Ele contém uma lista das contas do sistema, fornecendo para cada conta algumas informações úteis, como ID do usuário, ID do grupo, diretório inicial, shell e muito mais.
+
+O arquivo /etc/passwd deve ter permissão de leitura geral, pois muitos utilitários de comando o utilizam para mapear IDs de usuários para nomes de usuários. No entanto, o acesso de gravação ao /etc/passwd deve ser limitado apenas para a conta superusuário (root). Quando isso não acontece ou um usuário foi adicionado erroneamente a um grupo com permissão de gravação, existe uma vulnerabilidade que pode permitir a criação de um usuário root que pode ser utilizado para elevação de privilégios.
+
+### Compreendendo o formato /etc/passwd
+
+O arquivo /etc/passwd contém uma entrada por linha para cada usuário (conta de usuário) do sistema. Todos os campos são separados por um "**:**". São no total sete campos. Geralmente, a entrada do arquivo /etc/passwd tem a seguinte aparência:
+
+```shell
+teste:x:0:0:raiz:/raiz:/bin/bash
+```
+Usando o ":" como separador, tem-se os campos abaixo:
+- ***Username***: É usado quando o usuário faz login. Deve ter entre 1 e 32 caracteres.
+- ***Password***: Um **x** indica que a senha criptografada está armazenada no arquivo ***/etc/shadow***. Uma observação é que é preciso usar o comando passwd para calcular o hash de uma senha digitada na CLI ou para armazenar/atualizar o hash da senha no arquivo ***/etc/shadow***, neste caso, o hash da senha é armazenado como um "**x**".
+- ***User ID (UID)***: Cada usuário deve receber um ID de usuário (**UID**). **UID 0** (zero) é reservado para root e **UIDs 1-99** são reservados para outras contas predefinidas. Os **UID 100-999** são reservados pelo sistema para contas/grupos administrativos e do sistema - contas de sistema.
+- ***Group ID (GID)***: O ID do grupo primário (armazenado no arquivo ***/etc/group***)
+- ***User ID Info***: O campo de comentários. Ele permite que você adicione informações extras sobre os usuários, como nome completo do usuário, número de telefone, etc. 
+- ***Home directory***: O caminho absoluto para o diretório home do usuário. Se este diretório não existir, o diretório de usuários se tornará "**/**".
+- ***Command/shell***: Caminho absoluto para um comando ou shell padrão do usuário. O mais comum é ser um shell, mas não precisa ser um shell.
+
+### Como explorar um /etc/passwd com permissão de escrita
+
+É muito simples, se o arquivo ***/etc/passwd*** é gravável, pode-se escrever uma nova entrada de linha de acordo com o formato indicado anteriormente, criando assim um novo usuário! Adiciona-se o hash de senha de nossa escolha e definimos o UID, GID e shell como root. Com isso, é possível fazer login com um usuário com privilégios de root!
+
+### Questões:
+
+- a. ***Frst, let's exit out of root from our previous task by typing "exit". Then use "su" to swap to user7, with the password "password"***: *Não há necessidade de responder*
+
+- b. ***Having read the information above, what direction privilege escalation is this attack?***: *Vertical*
+
+- c. ***What is the hash created by using this command with the salt, "new" and the password "123"?***:  *$1$new$p7ptkEKU1HnaHpRtzNizS1*
+
+Para responder a questão "**c**", é necessário utilizar o comando openssl:
+
+```shell
+openssl passwd -1 -salt "new" "123"
+```
+- ***new*** e ***123*** foram indicados na própria tarefa do tryhacme. Correspondem ao usuário e a senha respectivamente.
+
+- d. ***What would the /etc/passwd entry look like for a root user with the username "new" and the password hash we created before?***: *new:$1$new$p7ptkEKU1HnaHpRtzNizS1:0:0:root:/root:/bin/bash*
+
+As duas últimas questões não tem necessidade respostas, apenas passam informações adicionais, como por exemplo, usar o comando ***su - new***, para mudar para o usuário ***new***, que tem tem privilégios de ***root***.
+
+É importante destacar que o cenário demonstrado, pressupõe que o ambiente já tinha sido explorado e já se tinha senha do usuário ***user7***.
