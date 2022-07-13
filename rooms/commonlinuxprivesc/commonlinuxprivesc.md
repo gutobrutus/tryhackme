@@ -517,3 +517,13 @@ Isso fará com que você abra um prompt bash toda vez que usar "***ls***". Se vo
 
 Depois de terminar o exploit, pode sair do root e usar "***export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:$PATH***" para redefinir a variável PATH de volta ao padrão, permitindo que se use "ls" novamente!
 
+## Expanding Your Knowledge
+
+Conclusão da room, esclarecendo que foram expostos alguns exemplos simples de elevação de privilégios em ambientes linux.
+
+Foram indicadas algumas urls de checklists ou casos de usos de pentests.
+
+- https://github.com/netbiosX/Checklists/blob/master/Linux-Privilege-Escalation.md
+- https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Linux%20-%20Privilege%20Escalation.md
+- https://sushant747.gitbooks.io/total-oscp-guide/privilege_escalation_-_linux.html
+- https://payatu.com/guide-linux-privilege-escalation
