@@ -1,0 +1,5 @@
+# Nmap 7.92 scan initiated Wed Jul 13 19:44:42 2022 as: nmap -sS -sV -O -sC --script vuln -T5 -Pn -p- -oA portscan -v 10.10.80.157
+# Ports scanned: TCP(65535;1-65535) UDP(0;) SCTP(0;) PROTOCOLS(0;)
+Host: 10.10.80.157 ()	Status: Up
+Host: 10.10.80.157 ()	Status: Timeout
+# Nmap done at Wed Jul 13 19:59:53 2022 -- 1 IP address (1 host up) scanned in 911.09 seconds
