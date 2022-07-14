@@ -127,4 +127,17 @@ Para responder a questão ***b***, basta uma pesuisa rápida na internet. Entret
 
 - c. ***What is the root user's password?*** *password123*
 
+## 4 - Weak File Permissions - Writable /etc/shadow
 
+Se o arquivo /etc/shadow por alguma razão tiver permissão de gravação, basta gerar uma hash e substituir a hash atual do usuário root pela nova.
+
+Para gerar uma hash no padrão do arquivo shadow:
+
+```shell
+mkpasswd -m sha-512 novasenha
+```
+Depois de editar o arquivo /etc/shadow mudando a hash do usuário root pela nova gerada com o comando acima e salvar, basta elevar para o usuário root com ***su root***.
+
+### Questões:
+
+- a. ***Read and follow along with the above.*** *Não há necessidade de resposta*
