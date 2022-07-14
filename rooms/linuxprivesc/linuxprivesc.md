@@ -141,3 +141,42 @@ Depois de editar o arquivo /etc/shadow mudando a hash do usuário root pela nova
 ### Questões:
 
 - a. ***Read and follow along with the above.*** *Não há necessidade de resposta*
+
+## 5 - Weak File Permissions - Writable /etc/passwd 
+
+O arquivo ***/etc/passwd*** contém informações sobre contas de usuários do sistema. Ele tem permissão de leitura para todos os usuário, porém a permissão de escrita é somente para o usuário root.
+
+Historicamente, o arquivo ***/etc/passwd*** continha hashes de senha do usuário, e algumas versões do Linux ainda permitem que hashes de senha sejam armazenados lá.
+
+Se esse arquivo tiver permissão de escrita para outros usuários, é possível explorar essa fraqueza para elevar privilégios.
+
+Primeiro, gera-se uma hash de senha com o comando abaixo:
+
+```shell
+openssl passwd senhaaterhashgerada
+```
+
+Agora, basta editar o arquivo ***/etc/passwd*** e na linha que contém o usuário root, substituir o "x" pela hash gerada com o comando anterior.
+
+Para elevar para root:
+
+```shell
+su root
+```
+Abaixo a demonstração:
+
+```shell
+user@debian:~$ ls -l /etc/passwd
+-rw-r--rw- 1 root root 1009 Aug 25  2019 /etc/passwd
+user@debian:~$ openssl passwd Senha123
+lIkG5D1fwKsp6
+user@debian:~$ vi /etc/passwd
+user@debian:~$ su root
+root@debian:/home/user# 
+```
+
+Outra forma, é adicionar um novo usuário com permissão de root, colocando a hash gerada no lugar do "x". Assim, não se altera o usuário root original.
+
+### Questões:
+
+- a. ***Run the "id" command as the newroot user. What is the result?*** *uid=0(root) gid=0(root) groups=0(root)*
