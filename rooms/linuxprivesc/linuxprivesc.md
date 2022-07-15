@@ -1057,3 +1057,16 @@ Assim que a exploração for concluída, basta executar ***/usr/bin/passwd*** pa
 ### Questões:
 
 - a. ***Read and follow along with the above.*** *Não há necessidade de resposta*
+
+## 21 - Privilege Escalation Scripts 
+
+Várias ferramentas foram escritas para ajudar a encontrar possíveis escalações de privilégios no Linux. Três dessas ferramentas foram incluídas na VM Debian alvo no seguinte diretório: ***/home/user/tools/privesc-scripts***
+
+```shell
+user@debian:~$ ls /home/user/tools/privesc-scripts
+LinEnum.sh  linpeas.sh  lse.sh
+```
+
+### Questões:
+
+- a. ***Experiment with all three tools, running them with different options. Do all of them identify the techniques used in this room?*** *Não há necessidade de resposta*
