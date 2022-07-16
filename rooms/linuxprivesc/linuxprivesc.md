@@ -537,7 +537,8 @@ find / -type f -a \( -perm -u+s -o -perm -g+s \) -exec ls -l {} \; 2> /dev/null
 Saída:
 
 ```shell
-user@debian:~$ find / -type f -a \( -perm -u+s -o -perm -g+s \) -exec ls -l {} \; 2> /dev/null-rwxr-sr-x 1 root shadow 19528 Feb 15  2011 /usr/bin/expiry
+user@debian:~$ find / -type f -a \( -perm -u+s -o -perm -g+s \) -exec ls -l {} \; 2> /dev/null
+-rwxr-sr-x 1 root shadow 19528 Feb 15  2011 /usr/bin/expiry
 -rwxr-sr-x 1 root ssh 108600 Apr  2  2014 /usr/bin/ssh-agent
 -rwsr-xr-x 1 root root 37552 Feb 15  2011 /usr/bin/chsh
 -rwsr-xr-x 2 root root 168136 Jan  5  2016 /usr/bin/sudo
