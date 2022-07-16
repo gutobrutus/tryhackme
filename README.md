@@ -2,6 +2,9 @@
 
 Repositório com notas de resolução de rooms do tryhackme.
 
+# Meu profile
+
+![My Profile - TryHackMe](https://tryhackme-badges.s3.amazonaws.com/gutobrutus.png)
 ## Lista de rooms concluídas
 - [Basic Pentesting](https://tryhackme.com/room/basicpentestingjt)  
     - [Resolução](rooms/basicpentest/basicpentest.md)

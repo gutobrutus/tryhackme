@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.92 scan initiated Sat Jul 16 09:55:36 2022 as: nmap -p 111 -&#45;script=nfs-ls,nfs-statfs,nfs-showmount -oX rpc 10.10.194.119 -->
+<nmaprun scanner="nmap" args="nmap -p 111 -&#45;script=nfs-ls,nfs-statfs,nfs-showmount -oX rpc 10.10.194.119" start="1657979736" startstr="Sat Jul 16 09:55:36 2022" version="7.92" xmloutputversion="1.05">
+<scaninfo type="syn" protocol="tcp" numservices="1" services="111"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<hosthint><status state="up" reason="unknown-response" reason_ttl="0"/>
+<address addr="10.10.194.119" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+</hosthint>
+<host starttime="1657979737" endtime="1657979741"><status state="up" reason="echo-reply" reason_ttl="63"/>
+<address addr="10.10.194.119" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+<ports><port protocol="tcp" portid="111"><state state="open" reason="syn-ack" reason_ttl="63"/><service name="rpcbind" method="table" conf="3"/><script id="nfs-showmount" output="&#xa;  /var *&#xa;"/><script id="nfs-ls" output="Volume /var&#xa;  access: Read Lookup NoModify NoExtend NoDelete NoExecute&#xa;PERMISSION  UID  GID  SIZE  TIME                 FILENAME&#xa;rwxr-xr-x   0    0    4096  2019-09-04T08:53:24  .&#xa;rwxr-xr-x   0    0    4096  2019-09-04T12:27:33  ..&#xa;rwxr-xr-x   0    0    4096  2019-09-04T12:09:49  backups&#xa;rwxr-xr-x   0    0    4096  2019-09-04T10:37:44  cache&#xa;rwxrwxrwt   0    0    4096  2019-09-04T08:43:56  crash&#xa;rwxrwsr-x   0    50   4096  2016-04-12T20:14:23  local&#xa;rwxrwxrwx   0    0    9     2019-09-04T08:41:33  lock&#xa;rwxrwxr-x   0    108  4096  2019-09-04T10:37:44  log&#xa;rwxr-xr-x   0    0    4096  2019-01-29T23:27:41  snap&#xa;rwxr-xr-x   0    0    4096  2019-09-04T08:53:24  www&#xa;&#xa;"><table key="volumes">
+<table>
+<table key="info">
+<elem>access: Read Lookup NoModify NoExtend NoDelete NoExecute</elem>
+</table>
+<table key="files">
+<table>
+<elem key="filename">.</elem>
+<elem key="time">2019-09-04T08:53:24</elem>
+<elem key="size">4096</elem>
+<elem key="uid">0</elem>
+<elem key="permission">rwxr-xr-x</elem>
+<elem key="gid">0</elem>
+</table>
+<table>
+<elem key="filename">..</elem>
+<elem key="time">2019-09-04T12:27:33</elem>
+<elem key="size">4096</elem>
+<elem key="uid">0</elem>
+<elem key="permission">rwxr-xr-x</elem>
+<elem key="gid">0</elem>
+</table>
+<table>
+<elem key="filename">backups</elem>
+<elem key="time">2019-09-04T12:09:49</elem>
+<elem key="size">4096</elem>
+<elem key="uid">0</elem>
+<elem key="permission">rwxr-xr-x</elem>
+<elem key="gid">0</elem>
+</table>
+<table>
+<elem key="filename">cache</elem>
+<elem key="time">2019-09-04T10:37:44</elem>
+<elem key="size">4096</elem>
+<elem key="uid">0</elem>
+<elem key="permission">rwxr-xr-x</elem>
+<elem key="gid">0</elem>
+</table>
+<table>
+<elem key="filename">crash</elem>
+<elem key="time">2019-09-04T08:43:56</elem>
+<elem key="size">4096</elem>
+<elem key="uid">0</elem>
+<elem key="permission">rwxrwxrwt</elem>
+<elem key="gid">0</elem>
+</table>
+<table>
+<elem key="filename">local</elem>
+<elem key="time">2016-04-12T20:14:23</elem>
+<elem key="size">4096</elem>
+<elem key="uid">0</elem>
+<elem key="permission">rwxrwsr-x</elem>
+<elem key="gid">50</elem>
+</table>
+<table>
+<elem key="filename">lock</elem>
+<elem key="time">2019-09-04T08:41:33</elem>
+<elem key="size">9</elem>
+<elem key="uid">0</elem>
+<elem key="permission">rwxrwxrwx</elem>
+<elem key="gid">0</elem>
+</table>
+<table>
+<elem key="filename">log</elem>
+<elem key="time">2019-09-04T10:37:44</elem>
+<elem key="size">4096</elem>
+<elem key="uid">0</elem>
+<elem key="permission">rwxrwxr-x</elem>
+<elem key="gid">108</elem>
+</table>
+<table>
+<elem key="filename">snap</elem>
+<elem key="time">2019-01-29T23:27:41</elem>
+<elem key="size">4096</elem>
+<elem key="uid">0</elem>
+<elem key="permission">rwxr-xr-x</elem>
+<elem key="gid">0</elem>
+</table>
+<table>
+<elem key="filename">www</elem>
+<elem key="time">2019-09-04T08:53:24</elem>
+<elem key="size">4096</elem>
+<elem key="uid">0</elem>
+<elem key="permission">rwxr-xr-x</elem>
+<elem key="gid">0</elem>
+</table>
+</table>
+<elem key="volume">/var</elem>
+</table>
+</table>
+<table key="total">
+<elem key="bytes">36873</elem>
+<elem key="files">10</elem>
+</table>
+</script><script id="nfs-statfs" output="&#xa;  Filesystem  1K-blocks  Used       Available  Use%  Maxfilesize  Maxlink&#xa;  /var        9204224.0  1836520.0  6877108.0  22%   16.0T        32000&#xa;"/></port>
+</ports>
+<times srtt="336751" rttvar="270922" to="1420439"/>
+</host>
+<runstats><finished time="1657979741" timestr="Sat Jul 16 09:55:41 2022" summary="Nmap done at Sat Jul 16 09:55:41 2022; 1 IP address (1 host up) scanned in 4.61 seconds" elapsed="4.61" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>
