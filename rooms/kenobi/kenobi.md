@@ -170,6 +170,7 @@ log.txt
 ```
 smbget -R smb://<ip>/anonymous
 ```
+
 Exemplo:
 
 ```shell
@@ -184,6 +185,7 @@ Failed to download /log.txt: File exists
 Aqui deu erro, pois o arquivo log.txt já existia. Tinha sido baixado anteriormente.
 
 No arquivo há algumas coisas interessantes encontradas.
+
 - Informações geradas para Kenobi ao gerar uma chave SSH para o usuário
 - Informações sobre o servidor ProFTPD.
 
@@ -198,6 +200,7 @@ No caso desta room, a porta 111 é o acesso a um sistema de arquivos de rede. Po
 ```shell
 nmap -p 111 --script=nfs-ls,nfs-statfs,nfs-showmount $TARGET -oX rpc
 ```
+
 A opção -oX é para gravar a saída em um arquivo XML.
 
 Saída:
@@ -233,6 +236,7 @@ PORT    STATE SERVICE
 
 Nmap done: 1 IP address (1 host up) scanned in 4.61 seconds
 ```
+
 O ponto de montagem ***/var*** é a resposta da questão ***d***.
 
 ### Questões:
@@ -256,7 +260,9 @@ Uma forma bem simples de descobrir é usando o netcat para testar uma conexão i
 ```shell
 nc $TARGET 21
 ```
+
 Exemplo:
+
 ```shell
 ┌──(root㉿kali)-[/tryhackme/rooms/kenobi]
 └─# nc $TARGET 21  
@@ -303,11 +309,13 @@ SITE CPFR /home/kenobi/.ssh/id_rsa
 SITE CPTO /var/tmp/id_rsa
 250 Copy successful
 ```
+
 Para conexão foi usado o netcat (nc).
 
 Como já se sabe, o ***/var*** é um ponto de montagem smb (task 2), ficou fácil obter a chave privada do usuário que movemos para ***/var/tmp***.
 
 Agora, basta montar:
+
 ![Mount NFS](images/mount_nfs.png)
 
 Depois disto, pode-se simplesmente acessar o diretório /mnt/kenobiNFS/tmp, copiar e ajustar permissões na chave privada do usuário kenobi. Por fim, usar esta chave para acesso ssh ao host alvo.
@@ -345,9 +353,11 @@ No texto da task é indicado como localizar arquivos com essas permissões:
 ```shell
 find / -perm -u=s -type f 2>/dev/null
 ```
+
 O trecho "***2>/dev/null***" é para suprimir erros na tela.
 
 Execução:
+
 ```shell
 kenobi@kenobi:~$ find / -perm -u=s -type f 2>/dev/null
 /sbin/mount.nfs
@@ -375,6 +385,7 @@ kenobi@kenobi:~$ find / -perm -u=s -type f 2>/dev/null
 /bin/su
 /bin/ping6
 ```
+
 Através da url [GTFOBins](https://gtfobins.github.io/), é possível ter uma fonte de consulta sobre binários que permitem elevação de privilégios.
 
 Um arquivo chama atenção: ***/usr/bin/menu***. Este será a resposta da questão ***a***.
@@ -399,6 +410,7 @@ Content-Length: 200
 Vary: Accept-Encoding
 Content-Type: text/html
 ```
+
 São exibidas inicialmente, 3 opções. Será a resposta da questão ***b***.
 
 Através do comando ***strings*** no Linux, é possível procurar textos legíveis por humanos em um binário.
@@ -455,5 +467,4 @@ Basta ler o arquivo /root/root.txt para responder a questão ***d***.
 - c. ***Apenas informações*** *Não há necessidade de resposta*
 
 - d. ***What is the root flag (/root/root.txt)?*** *177b3cd8562289f37382721c28381f02*
-
 
