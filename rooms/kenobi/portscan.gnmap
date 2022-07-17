@@ -1,0 +1,5 @@
+# Nmap 7.92 scan initiated Fri Jul 15 23:40:35 2022 as: nmap -A -T5 -Pn -p- -oA portscan -vvv 10.10.215.85
+# Ports scanned: TCP(65535;1-65535) UDP(0;) SCTP(0;) PROTOCOLS(0;)
+Host: 10.10.215.85 ()	Status: Up
+Host: 10.10.215.85 ()	Ports: 21/open/tcp//ftp//ProFTPD 1.3.5/, 22/open/tcp//ssh//OpenSSH 7.2p2 Ubuntu 4ubuntu2.7 (Ubuntu Linux; protocol 2.0)/, 80/open/tcp//http//Apache httpd 2.4.18 ((Ubuntu))/, 111/open/tcp//rpcbind//2-4 (RPC #100000)/, 139/open/tcp//netbios-ssn//Samba smbd 3.X - 4.X (workgroup: WORKGROUP)/, 445/open/tcp//netbios-ssn//Samba smbd 4.3.11-Ubuntu (workgroup: WORKGROUP)/, 2049/open/tcp//nfs_acl//2-3 (RPC #100227)/, 37757/open/tcp//mountd//1-3 (RPC #100005)/, 44549/open/tcp//nlockmgr//1-4 (RPC #100021)/, 45093/open/tcp//mountd//1-3 (RPC #100005)/, 57869/open/tcp//mountd//1-3 (RPC #100005)/	Ignored State: closed (65524)	Seq Index: 261	IP ID Seq: All zeros
+# Nmap done at Fri Jul 15 23:51:52 2022 -- 1 IP address (1 host up) scanned in 677.55 seconds
