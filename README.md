@@ -19,3 +19,5 @@ Repositório com notas de resolução de rooms do tryhackme.
     - [Resolução](rooms/kenobi/kenobi.md)
 - [Linux PrivEsc](https://tryhackme.com/room/linuxprivesc)  
     - [Resolução](rooms/linuxprivesc/linuxprivesc.md)
+- [Steel Mountain](https://tryhackme.com/room/steelmountain)
+    - [Resolução](rooms/steelmountain/steelmountain.md)
