@@ -210,6 +210,61 @@ Nota: Mesmo sendo citado o modelo OSI, no texto da task, ficou evidente estar se
 
 - a. ***Read the above and move on to analyzing application protocols.*** *Não há necessidade de resposta*
 
+## Task 7 - ARP Traffic
 
+### Visão geral - ARP
+
+ARP (Address Resolution Protocol) é um protocolo da camada 2 que é usado conectar um endereço IP a um endereço MAC, faz um de - para. Esse protocolo possui duas mensagens de interesse nesse momento: REQUEST e REPLY. Uma maneira de identificar em pacotes capturados, consiste verificar     no cabeçalho da mensagem, que pode conter *operation codes*:
+
+- Request (1)
+- Reply (2)
+
+Abaixo, você pode ver uma captura de pacote de várias solicitações e respostas ARP:
+
+![ARP Request - Replies](images/arp01.png)
+
+É importante observar que a maioria dos dispositivos se identificará ou o Wireshark o identificará como Intel_78, um exemplo de tráfego suspeito seria muitas solicitações de uma fonte não reconhecida. No entanto, pode-se habilitar uma configuração no Wireshark para resolver endereços físicos. Para habilitar esse recurso, navegue até *View > Name Resolution >* Certifique-se de que *Resolve Physical Addresses* esteja marcado.
+
+Observando a captura de tela abaixo, podemos ver que um dispositivo Cisco está enviando solicitações ARP, o que significa que devemos confiar nesse dispositivo, no entanto, deve-se sempre ter cautela ao analisar pacotes.
+
+![Pacotes ARP do mesmo dispositivo](images/arp02.png)
+
+### Trafégo ARP
+
+- ***Pacotes ARP Request***: Pode-se começar a analisar os pacotes examinando o primeiro pacote de solicitação ARP e os detalhes do pacote.
+
+![Arp request](images/arp03.png)
+
+Observando os detalhes do pacote acima, os detalhes mais importantes do pacote estão destacados em vermelho. O Opcode é a abreviação de código de operação e você informará se é uma REQUEST ou REPLY ARP. O segundo detalhe descrito é para onde o pacote está solicitando, neste caso, está transmitindo o pedido para todos.
+
+- ***Pacotes ARP Reply***: 
+
+![Arp reply](images/arp04.png)
+
+Observando os detalhes do pacote acima, podemos ver no Opcode que é um pacote ARP Reply. Também podemos obter outras informações úteis, como o endereço MAC e IP que foi enviado junto com a resposta, pois este é um pacote de resposta, sabemos que essa foi a informação enviada junto com a mensagem.
+
+O ARP é um dos protocolos mais simples de se analisar, tudo o que se precisa lembrar é identificar se é um pacote de solicitação ou resposta e por quem está sendo enviado.
+
+### Laboratório prático
+
+Para ilustrar será utilizado o arquivo pcap [nb6-startup.pcap](nb6-startup.pcap).
+
+Para carregar o arquivo no wireshark, basta clicar no menu File->Open.
+
+Após abrir, responder as questões.
+
+### Questões:
+
+- a. ***What is the Opcode for Packet 6?*** *request (1)* 
+
+- b. ***What is the source MAC Address of Packet 19?*** *80:fb:06:f0:45:d7*
+
+- c. ***What 4 packets are Reply packets?*** *76,400,459,520*
+
+Para responder a questão ***c***, coloca-se no filtro: arp. Em seguida, no resultado, procura-se por opcodes de replies.
+
+- d. ***What IP Address is at 80:fb:06:f0:45:d7?*** *10.251.23.1*
+
+Para responder a questão ***d***, coloca-se no filtro: eth.addr == 80:fb:06:f0:45:d7 and arp. Em seguida, no resultado, procura-se por reply com esse mac.
 
 
