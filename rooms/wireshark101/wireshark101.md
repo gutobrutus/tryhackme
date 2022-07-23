@@ -267,4 +267,55 @@ Para responder a questão ***c***, coloca-se no filtro: arp. Em seguida, no resu
 
 Para responder a questão ***d***, coloca-se no filtro: eth.addr == 80:fb:06:f0:45:d7 and arp. Em seguida, no resultado, procura-se por reply com esse mac.
 
+## Task 8 - ICMP Traffic
 
+### ICMP - visão geral
+
+O ICMP (Internet Control Message Protocol) é utilizado para analisar nodes em uma redes. É comumente utilizado no utilitário de linha de comando ***ping***. Mais detalhes sobre o ICMP na [RFC792](https://datatracker.ietf.org/doc/html/rfc792).
+
+Na imagem abaixo, pode-se observar como pacotes ICMP aparecem no wireshark. Há um request e um reply.
+
+![ICMP request e reply](images/icmp01.png)
+
+### Visão do tráfego ICMP
+
+- ***ICMP Request***: Na imagem mais abaixou, pode-se perceber detalhes de um ping request. Algumas coisas importantes a se notar nos detalhes do pacote, dentre elas o tipo e código.
+
+Um tipo igual a 8 é um pacote de request. Um tipo igual a 0 é um pacote de reply. Quando esses códigos são alterados ou não parecem corretos, isso geralmente é um sinal de atividade suspeita.
+
+Há dois outros detalhes dentro do pacote que são úteis para analisar: timestamp e data. O timestamp de data/hora pode ser útil para identificar a hora em que o ping foi solicitado, também pode ser útil para identificar atividades suspeitas em alguns casos. Também podemos olhar para a string de dados que normalmente será apenas uma string de dados aleatória.
+
+![ICMP - Request](images/icmp02.png)
+
+- ***ICMP Reply***: Na imagem mais abaixo, pode-se perceber que o pacote de reply é similar ao de request. A principal diferença que distingue-o do resquest é o código do tipo, no caso do reply, é o 0.
+
+Observe a imagem abaixo para perceber a diferença:
+
+![ICMP - Reply](images/icmp03.png)
+
+### Laboratório prático
+
+Para responder as questões, basta carregar no wireshark o arquivo [dns_icmp.pcapng](dns_icmp.pcapng). Nele só há dois protocolos, aplique um filtro por icmp.
+
+![ICMP Filtro](images/icmp04.gif)
+
+Os pacotes são numerados no wireshark, o que facilita para identificação e responder às questões.
+### Questões:
+
+- a. ***What is the type for packet 4?*** *8*
+
+Sobre a questão ***a***, o pacote 4 é um ICMP request, ou seja, 8.
+
+- b. ***What is the type for packet 5?*** *0*
+
+- c. ***What is the timestamp for packet 12, only including month day and year?*** *May 30, 2013*
+
+Para responder a questão ***c***, basta um clique no pacote 12 e inspecionar os detalhes.
+
+![ICMP detalhes - timestamp](images/icmp05.png)
+
+- d. ***What is the full data string for packet 18?*** *08090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f3031323334353637*
+
+Para responder a questão ***d***, basta clicar no pacote 18 e em detalhes localizar o campo ***Data***. Pode-se copiar o valor clicando como botão direito.
+
+![Copia do data](images/icmp06.gif)
