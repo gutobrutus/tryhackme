@@ -364,3 +364,53 @@ Normalmente, os pacotes TCP precisam ser vistos como um todo para contar uma his
 ### Questões:
 
 - a. ***Read the above and move into Task 10.*** Não há necessidade de resposta
+
+## Task 10 - DNS Traffic
+
+### Visão Geral - DNS
+
+O DNS (Domain Name Service Protocol) é usado para resolver nomes em endereços IPs. Para maiores detalhes, pode ser consutada a [RFC 1035](https://www.ietf.org/rfc/rfc1035.txt).
+
+Ao se analisar pacotes DNS, deve-se ter em mente:
+
+- Query-response;
+- DNS-Servers Only
+- UDP
+
+Se algum dos itens acima estiver fora do lugar, os pacotes devem ser examinados mais detalhadamente e devem ser considerados suspeitos.
+
+Na imagem abaixo, pode-se observar a captura de múltiplos pacotes DNS, queries e responses:
+
+![Captura de pacotes DNS](images/dns01.png)
+
+### Visão geral do tráfego DNS
+
+- ***DNS Query***: Observando a consulta na imagem abaixo, há duas informações que podemos usar para analisar o pacote. A primeira informação que podemos ver é de onde a consulta está se originando, neste caso, é UDP 53, o que significa que este pacote passa nessa verificação, se for TCP 53, deve ser considerado tráfego suspeito e precisa ser analisado com mais atenção. Também podemos ver o que está consultando, isso pode ser útil com outras informações para construir uma história do que aconteceu.
+
+![Análise de DNS Query](images/dns02.png)
+
+Quando se analisa pacotes DNS, o conhecimento do seu ambiente é extremamente importante, pois facilita o que seria considerado um tráfego normal ou suspeito.
+
+- ***DNS Response***: Na imagem abaixo, pode-se observar um pacote de *DNS Response*, que é similar ao de *DNS Query*, mas ele inclui a resposta que pode ser usada para verificar a consulta.
+
+![Análise de DNS Response](images/dns03.png)
+
+### Laboratório prático
+
+Para análise usando o wireshark, será utilizado [este arquivo](dns_icmp2.pcapng). Basta carregar no wireshark, através do menu ***file -> open***. Esta captura tem apenas dois protocolos (ICMP e DNS), se preferir, pode filtrar ou manter a exibição do ICMP na lista.
+
+### Questões:
+
+- a. ***What is being queried in packet 1?*** *8.8.8.8.in-addr.arpa*
+
+Para responder a questão ***a***, observe abaixo:
+
+![Resposta da questão a](images/dns04.gif)
+
+- b. ***What site is being queried in packet 26?*** *www.wireshark.org*
+
+- c. ***What is the Transaction ID for packet 26?*** 0x2c58
+
+As questões **b** e ***c***, podem ser respondidas de maneira análoga a como foi procedido na questão ***a***.
+
+
