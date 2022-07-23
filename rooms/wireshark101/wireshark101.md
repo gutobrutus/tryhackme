@@ -319,3 +319,48 @@ Para responder a questão ***c***, basta um clique no pacote 12 e inspecionar os
 Para responder a questão ***d***, basta clicar no pacote 18 e em detalhes localizar o campo ***Data***. Pode-se copiar o valor clicando como botão direito.
 
 ![Copia do data](images/icmp06.gif)
+
+
+## Task 9 - TCP Traffic 
+
+### TCP - Visão Geral
+
+O TCP (Transmission Control Protocol) trabalha com a entrega de pacotes, incluindo sequenciamento e tratamento de erros. Para mais detalhes, acessar a [RFC 793](https://datatracker.ietf.org/doc/html/rfc793).
+
+Na imagem abaixo, é possível perceber um exemplo com nmap scan, nas portas 80 e 443. Percebe-se que as portas estão fechadas em virtude dos pacotes com RST e ACK em vermelho.
+
+![TCP 01](images/tcp01.png)
+
+Ao analisar pacotes TCP, o Wireshark pode ser muito útil, pois codifica por cores os pacotes em ordem de nível de perigo. 
+
+O TCP pode fornecer informações úteis sobre uma rede ao analisar, mas também pode ser difícil de analisar devido ao número de pacotes que ele envia. É aqui que você pode precisar usar outras ferramentas como RSA NetWitness e NetworkMiner para filtrar e analisar melhor as capturas.
+
+### Visão geral do tráfego TCP
+
+O mais comum de se observar ao analisar um tráfego TCP é o que se chama de Handshake TCP. O handshake inclui uma série de pacotes com determinadas flags: syn, synack, ack. São usadas para estabelecer uma comunicação.
+
+![Handshake](images/tcp02.png)
+
+Normalmente, quando esse handshake está fora de ordem ou quando inclui outros pacotes, como um pacote RST, algo suspeito ou errado está acontecendo na rede. A varredura do Nmap na seção acima é um exemplo perfeito disso.
+
+### Análise de pacotes TCP
+
+Para analisar pacotes TCP no wireshark, é preciso ir nos detalhes de cada pacote. Pode-se observar alguns comportamentos e estruturas que os pacotes possuem.
+
+Na imagem abaixo, detalhes de um pacote com a flag SYN. A principal coisa que se procura ao olhar para um pacote TCP é o número de sequência e o número de confirmação.
+
+![TCP SYN detalhes](images/tcp03.png)
+
+Nesse caso, vemos que a porta não estava aberta porque o número de confirmação é 0.
+
+No Wireshark, também podemos ver o número de sequência original navegando para editar > preferências > protocolos > TCP > números de sequência relativos (desmarque a caixa).
+
+![Config do wireshark](images/tcp04.png)
+
+![TCP Análise](images/tcp05.png)
+
+Normalmente, os pacotes TCP precisam ser vistos como um todo para contar uma história, em vez de um por um nos detalhes.
+
+### Questões:
+
+- a. ***Read the above and move into Task 10.*** Não há necessidade de resposta
