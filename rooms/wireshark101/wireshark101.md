@@ -413,4 +413,143 @@ Para responder a questão ***a***, observe abaixo:
 
 As questões **b** e ***c***, podem ser respondidas de maneira análoga a como foi procedido na questão ***a***.
 
+## Task 11 - HTTP Traffic
+
+O HTTP (Hypertext Tranfer Protocol) é comumente usado na world wide web. Também existe uma opção com encriptação, HTTPS, que será discutido na próxima task. De uma maneira simplificada, o HTTP é utilizado por meio do envio de requisições GET e POST para um webserver que hospeda sites. Conhecimento sobre o funcionamento do HTTP ajuda em várias situações de pentest, como: SQLi, Web Shells e outros vetores de ataque usando a web.
+
+### Visão geral do HTTP
+
+Para obter mais informações sobre o HTTP, é recomendável acessar a [RFC 2616](https://www.ietf.org/rfc/rfc2616.txt). O HTTP é um dos protocolos mais diretos para análise de pacotes, o protocolo é direto ao ponto e não inclui nenhum handshake ou pré-requisitos antes da comunicação.
+
+![Pacote HTTP](images/http01.png)
+
+Na imagem acima, pode-se observar um pacote HTTP em que o conteúdo do pacote, inclusive os dados em texto claro, pois não é criptografado como ocorre com o HTTPS. Algumas informações interessante são a URI de request, dados do arquivo e servidor.
+
+### Laboratório prático
+
+Para entender melhor, basta carregar o arquivo [http](http.cap) no wireshark.
+
+![Carregamento de arquivo de amostra de pacotes http](images/http02.gif)
+
+Após o carregamento do arquivo de captura, pode-se observar alguns pacotes HTTP com algumas solicitações (requests). Ao clicar em um pacote HTTP, é possível visualizar os detalhes. Por exemplo, clicando no pacote 4:
+
+![Detalhes de um pacote HTTP](images/http03.png)
+
+Algumas informações interessantes são perecebidas no detalhe do pacote, como: host, user-agent, requested URI e a response.
+
+O Wireshar fornece algumas facilidades para ajudar na análise. Para ilustrar, existe um recurso muito útil que possibilida organizar os protocolos presentes em uma captura de forma hierarquica. Para isso, basta clicar no menu ***Statistics -> Protocol Hierarchy***.
+
+![Exibindo estatísticas - hierarquia de protocolo](images/http04.gif)
+
+A exibição dessas informações podem ajudar muito em várias situações, como por exemplo, em threat hunting (caça de ameaças).
+
+Outro recurso interessante do Wireshark é a possibilidade de exportar um objeto HTTP. Ele permite organizar todas as URIs requisitadas na captura. Para usar o recurso, basta acessar o menu ***File -> Export Objects -> HTTP***.
+
+![Export Objects](images/http05.png)
+
+De forma similar ao Protocol Hierarchy, ajuda na identificação rápida de várias informações, que auxiliam em várias situações.
+
+Uma última funcionalidade a citar nessa task, seria o Endpoints. Essa funcionalidade permite o usuário organizar todos os endpoints e IPs identificados na captura. Para usar esse recurso, basta acessr o menu ***Statistics -> Endpoints***.
+
+O HTTP não é um protocolo muito comum de se ver em uso, pois o HTTPS agora é o mais comumente utilizado. No entanto, caso se encontre em uso o HTTP pode ser muito fácil de analisar.
+
+### Questões:
+
+- a. ***What percent of packets originate from Domain Name System?*** *4.7*
+
+Para responder a questão ***a***, basta acessar Statistics -> Protocol Hierarchy.
+
+- b. ***What endpoint ends in .237?*** *145.254.160.237*
+
+Para responder a questão ***b***, basta acessar Statistics -> Endpoints.
+
+- c. ***What is the user-agent listed in packet 4?***
+
+Para responder a questão ***c***, basta acessar os detalhes do pacote 4.
+
+- d. ***Looking at the data stream what is the full request URI from packet 18?*** *http://pagead2.googlesyndication.com/pagead/ads?client=ca-pub-2309191948673629&random=1084443430285&lmt=1082467020&format=468x60_as&output=html&url=http%3A%2F%2Fwww.ethereal.com%2Fdownload.html&color_bg=FFFFFF&color_text=333333&color_link=000000&color_url=666633&color_border=666633*
+
+Para responder a questão ***d***, basta acessar os detalhes do pacote 18.
+
+- e. ***What domain name was requested from packet 38?*** *www.ethereal.com*
+
+- f. ***Looking at the data stream what is the full request URI from packet 38?*** *http://www.ethereal.com/download.html*
+
+
+## Task 12 - HTTPS Traffic
+
+O HTTPS (Hypertext Transfer Protocol Secure) é bem complexo para realizar análise de pacotes, podendo causar certa confusão ao analisar os pacotes HTTPS.
+
+### Visão geral do tráfego HTTPS
+
+Antes de enviar informação encriptada o cliente e o servidor precisam acordar uma série de etapas para estabelecer um tunelamento seguro:
+
+1. Cliente e servidor acordam com a versão do protocolo;
+2. Cliente e servidor selecionam o algorítimo criptográfico que será utilizado;
+3. O cliente e o servidor se autenticam um com o outro. Este passo é opcional;
+4. Criação de um tunelamento seguro com utilização de uma chave pública.
+
+Pode-se começar a analisar o tráfego HTTPS examinando os pacotes para o handshake entre o cliente e o servidor. Abaixo está um pacote ***Client Hello*** mostrando a camada de registro SSLv2, o tipo de handshake e a versão SSL.
+
+![Client Hello](images/https01.png)
+
+Na imagem abaixo está o pacote ***Server Hello*** enviando informações semelhantes ao pacote ***Client Hello***, mas desta vez inclui detalhes da sessão e informações do certificado SSL.
+
+![Server Hello](images/https02.png)
+
+
+Abaixo, na imagem, está o pacote ***Client Key Exchange***, esta parte do handshake determinará a chave pública a ser usada para criptografar outras mensagens entre o Cliente e o Servidor.
+
+![Client Key Exchange](images/https03.png)
+
+No próximo pacote, o servidor confirmará a chave pública e criará o túnel seguro, todo o tráfego após esse ponto será criptografado com base nas especificações acordadas anteriormente.
+
+O tráfego entre o Cliente e o Servidor agora está criptografado e você precisará da chave secreta para descriptografar o fluxo de dados que está sendo enviado entre os dois hosts.
+
+![Dados criptografados](images/https04.png)
+
+### Laboratório prático
+
+Para executar a análise no Wireshark, foram utilizados os arquivos [rsasnakeoil2.cap](snakeoil2/rsasnakeoil2.cap) e a [chave privada](snakeoil2/rsasnakeoil2.key), que foram disponibilizados para download.
+
+Após carregar o arquivo de captura de pacotes no Wireshark, basta prosseguir.
+
+![Captura de pacotes carregada](images/https05.png)
+
+Observando a captura de pacotes da imagem acima, pode-se ver que todas as solicitações são criptografadas. Olhando mais de perto os pacotes, observa-se o handshake HTTPS, bem como as próprias solicitações criptografadas. Para melhor ilustrar, acessa-se os detalhes de um pacote: Pacote 11.
+
+![Detalhes do pacote 11](images/https06.png)
+
+Observa-se pelos detalhes do pacote que os Dados do Aplicativo estão criptografados. Você pode usar uma chave RSA no Wireshark para visualizar os dados não criptografados. Para carregar uma chave RSA, navegue até ***Edit > Preferences > Protocols > TLS > RSA Key List (Button Edit) > [+]***. Se estiver usando uma versão mais antiga do Wireshark, isso será SSL em vez de TLS. Você precisará preencher as várias seções do menu com as seguintes preferências:
+
+- IP Address: 127.0.0.1
+- Port: start_tls
+- Protocol: http
+- Keyfile: RSA key location
+
+![Adição de chave RSA](images/https07.png)
+
+Adiciona-se a chave privada RSA disponibilizada. Agora que temos uma chave RSA importada para o Wireshark, se voltarmos à captura de pacotes, podemos ver que o fluxo de dados não está criptografado.
+
+![Dados descriptografados](images/https08.png)
+
+Pode-se observar as requisições HTTP sem criptografia, graças a importação da chave RSA.
+
+![Dados sem criptografia](images/https09.png)
+
+Observando os detalhes do pacote, podemos ver algumas informações muito importantes, como o URI de solicitação e o User-Agent, que podem ser muito úteis em aplicações práticas do Wireshark, como caça a ameaças e administração de rede.
+
+Agora podemos usar outros recursos para organizar o fluxo de dados, como usar o recurso de exportação de objeto HTTP, para acessar esse recurso navegue até ***File > Export Objects > HTTP***.
+
+É evidente que só se conseguiu descriptografar os dados por conta da chave privada.
+### Questões:
+
+- a. ***Looking at the data stream what is the full request URI for packet 31?*** *https://localhost/icons/apache_pb.png*
+
+- b. ***Looking at the data stream what is the full request URI for packet 50?*** *https://localhost/icons/back.gif*
+
+- c. ***What is the User-Agent listed in packet 50?*** *Mozilla/5.0 (X11; U; Linux i686; fr; rv:1.8.0.2) Gecko/20060308 Firefox/1.5.0.2*
+
+
+
 
