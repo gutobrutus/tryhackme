@@ -550,6 +550,42 @@ Agora podemos usar outros recursos para organizar o fluxo de dados, como usar o 
 
 - c. ***What is the User-Agent listed in packet 50?*** *Mozilla/5.0 (X11; U; Linux i686; fr; rv:1.8.0.2) Gecko/20060308 Firefox/1.5.0.2*
 
+## Task 13 - Analyzing Exploit PCAPs
 
+### Zerologon PCAP - Visão geral
 
+No arquivo [PCAP](zerologon.pcap) contém pacotes referente a um Windows Active Directory Exploit recente chamado Zerologon ou CVE-2020-1472. O cenário dentro do arquivo PCAP contém um controlador de domínio do Windows com um IP privado de 192.168.100.6 e um invasor com o IP privado de 192.168.100.128. É possível percorrer as etapas de análise do PCAP e chegar a uma hipótese dos eventos que aconteceram.
 
+![Zerologon captura](images/zerologon01.png)
+
+### Identificando o atacante
+
+Imediatamente ao abrir o arquivo PCAP, algumas coisas que podem estar fora do comum. Primeiro, vemos algum tráfego normal do OpenVPN, ARP, etc. Começamos então a identificar o que seria conhecido como protocolos desconhecidos neste caso DCERPC e EPM.
+
+Observando os pacotes, percebe-se que 192.168.100.128 está enviando todas as solicitações, então pode-se supor que o dispositivo é o invasor. Ao continuar analisando os pacotes vindos desse IP para restringir nossa busca (filtro).
+
+### POC de Análise Zerologon
+
+![Filtro pelo ip do atacante](images/zerologon02.png)
+
+Após definir um filtro para o src do IP suspeito e analisar o PCAPS, precisa-se estar ciente dos IOCs ou Indicadores de Comprometimento (***Indicators of Compromise***)  que explorações específicas podem ter com eles. Isso é conhecido como Inteligência de Ameaças (***Threat Intelligence***), que está fora do escopo desta room. Recomenda-se que depois de completar esta room, pesquise-se sobre o tema. Nesse caso, se tivéssemos conhecimento prévio do exploit Zerologon, saberíamos que o exploit usa várias conexões RPC e solicitações DCERPC para alterar a senha da conta da máquina, o que pode ser verificado com o PCAP.
+
+### Secretdump SMB - Análise
+
+Observando a captura de pacotes, observa-se o tráfego SMB2/3 e o tráfego DRSUAPI, novamente com conhecimento prévio do ataque, sabemos que ele usa secretsdump para despejar hashes. O secretsdump abusa do SMB2/3 e do DRSUAPI para fazer isso, então podemos supor que esse tráfego é secretsdump.
+
+![Secretdump](images/zerologon03.png)
+
+Cada exploração e ataque virá com seus artefatos exclusivos, neste caso, fica claro o que aconteceu e a ordem dos eventos que ocorreram. Depois de identificar o invasor, precisaríamos passar para outras etapas para identificar e isolar, bem como relatar o incidente, se estivéssemos em uma equipe de caça a ameaças ou ***DFIR*** (***Digital Forensics and Incident Response***).
+
+### Questões:
+
+- a. ***Informações*** *Não há necesdidade de resposta*
+
+## Task 14 - Conclusion
+
+- [Documentação oficial do Wireshark](https://www.wireshark.org/docs/)
+
+- [Arquivos de captura de exemplos](https://wiki.wireshark.org/SampleCaptures)
+
+- [Case - Threat Hunting and DFIR](https://dfirmadness.com/case-001-pcap-analysis/)
