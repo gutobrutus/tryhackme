@@ -128,3 +128,28 @@ Após o login, Nessus foi instalado e configurado com sucesso.
 ![Nessus instalado e configurado](images/nessus10.png)
 
 - j. ***Nessus instalado*** *Não há necessidade de resposta*
+
+## Task 3 - Navigation and Scans
+
+Ao logar, será exibida a tela abaixo, após clicar no botão ***New Scan***:
+
+![Navegação e tipos de scans no Nessus](images/nessus11.png)
+
+### Questões:
+
+- a. ***What is the name of the button which is used to launch a scan?*** *New Scan*
+
+- b. ***What side menu option allows us to create custom templates?*** *Policies*
+
+- c. ***What menu allows us to change plugin properties such as hiding them or changing their severity?*** *Plugin Rules*
+
+- d. ***In the 'Scan Templates' section after clicking on 'New Scan', what scan allows us to see simply what hosts are alive?*** *Host Discovery*
+
+- e. ***One of the most useful scan types, which is considered to be 'suitable for any host'?*** *Basic Network Scan*
+
+- f. ***What scan allows you to 'Authenticate to hosts and enumerate missing updates'?*** *Credentialed Patch Audit*
+
+- g. ***What scan is specifically used for scanning Web Applications?*** *Web Application Tests*
+
+As respostas acima são bem fáceis de encontrar na UI do Nessus.
+
