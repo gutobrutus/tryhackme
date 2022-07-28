@@ -153,3 +153,44 @@ Ao logar, será exibida a tela abaixo, após clicar no botão ***New Scan***:
 
 As respostas acima são bem fáceis de encontrar na UI do Nessus.
 
+## Task 4 - Scanning!
+
+Inicia-se a VM alvo.
+
+Será executada um ***Basic Network Scan***.
+
+![Basic Network Scan](images/nessus12.gif)
+
+### Questões:
+
+- a. ***What option can we set under 'BASIC' (on the left) to set a time for this scan to run? This can be very useful when network congestion is an issue.*** *Schedule*
+
+- b. ***Under 'DISCOVERY' (on the left) set the 'Scan Type' to cover ports 1-65535. What is this type called?*** *Port scan (all ports)*
+
+- c. ***What 'Scan Type' can we change to under 'ADVANCED' for lower bandwidth connection?*** *Scan low bandwidth links*
+
+- d. ***With these options set, launch the scan.*** *Não há necessidade de resposta*
+
+- e. ***After the scan completes, which 'Vulnerability' in the 'Port scanners' family can we view the details of to see the open ports on this host?*** *Nessus SYN scanner*
+
+- f. ***What Apache HTTP Server Version is reported by Nessus?*** *2.4.99*
+
+## Task 5 - Scanning a Web Application!
+
+Execução de um scan de Web Application na VM alvo.
+
+### Questões:
+
+- a. ***What is the plugin id of the plugin that determines the HTTP server type and version?*** *10107*
+
+- b. ***What authentication page is discovered by the scanner that transmits credentials in cleartext?*** *Login.php*
+
+- c. ***What is the file extension of the config backup?*** *.bak*
+
+- d. ***Which directory contains example documents? (This will be in a php directory)*** *external/phpids/0.6/docs/examples*
+
+Para responder a questão ***d***, basta acessar a vulnerabilidade ***Web Server (Multiple Issues)***, localizar ***Web Server Directory Enumeration***. Após isso, basta navegar em uma nova aba nos diretórios indicados.
+
+- e. ***What vulnerability is this application susceptible to that is associated with X-Frame-Options?*** *Clickjacking*
+
+Todas as questões são facilmente responddas apenas navegando na interface UI do Nessus, cliando no Scan que foi criado.
