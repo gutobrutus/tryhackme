@@ -111,3 +111,60 @@ Para responder as questões, inicie pela página da técnica de Phishing.
 - j. ***How many techniques are attributed to this group?*** *15*
 
 Todas as questões podem ser respondidas apenas nevagando nos hiperlinks da página de Phishing.
+
+
+## Task 4 - CAR Knowledge Base 
+
+### Cyber Analytics Repository
+
+A definição ofical para CAR é "*O MITRE Cyber Analytics Repository (CAR) é uma base de conhecimento de análise desenvolvida pela MITRE com base no modelo de adversários MITRE ATT&CK®. O CAR define um modelo de dados que é aproveitado em suas representações de pseudocódigo, mas também inclui implementações direcionadas diretamente a ferramentas específicas (por exemplo, Splunk, EQL) em suas análises. No que diz respeito à cobertura, o CAR está focado em fornecer um conjunto de análises validadas e bem explicadas, em particular no que diz respeito à sua teoria e lógica de operação.*" - Tradução direta.
+
+Para iniciar, acesse [CAR-2020-09-001: Scheduled Task - File Access](https://car.mitre.org/analytics/CAR-2020-09-001/). Ao acessar a página, é exibida uma breve descrição da análise e referências ao ATT&CK (com técnica, sub-técnica e tática).
+
+![Schedule Task - FileAccess](images/mitre09.png)
+
+Também pode-se visualizar o Pseudocódigo e uma consulta sobre como pesquisar essa análise específica no **Splunk**. Um pseudocódigo é uma maneira simples e legível para descrever um conjunto de instruções ou algoritmos que um programa ou sistema executará.
+
+![Pseudocódigo](images/mitre10.png)
+
+Para tirar o máximo proveito do CAR, é possível visualizar a ***[Full Analytic List](https://car.mitre.org/analytics)*** ou ***[CAR ATT&CK® Navigator](https://mitre-attack.github.io/attack-navigator/#layerURL=https://raw.githubusercontent.com/mitre-attack/car/master/docs/coverage/car_analytic_coverage_04_05_2022.json)*** para visualizar todas as análises.
+
+### Full Analytic List
+
+![Full Analystic List](images/mitre11.png)
+
+Na visualização Full Analytic List, podemos ver quais implementações estão disponíveis para qualquer análise em uma única olhada, juntamente com a plataforma de SO à qual ela se aplica.
+
+### CAR ATT&CK Navigator
+
+![CAR ATT&CK Navigator](images/mitre12.png)
+
+(As técnicas destacadas em lilás são as análises atualmente no CAR)
+
+Para ilustrar melhor, outra análise que pode ser visualizada de uma implementação diferente é a [CAR-2014-11-004: Remote PowerShell Sessions](https://car.mitre.org/analytics/CAR-2014-11-004/).
+
+Em Implementações, um pseudocódigo é fornecido e uma versão EQL do pseudocódigo. EQL (pronunciado como 'igual'), e é um acrônimo para Event Query Language. EQL pode ser utilizado para consultar, analisar e organizar dados de eventos do Sysmon. Você pode ler mais sobre isso [aqui](https://eql.readthedocs.io/en/latest/).
+
+![EQL](images/mitre13.png)
+
+Para resumir, o CAR é um ótimo lugar para encontrar análises que nos levam além dos resumos de Mitigação e Detecção na estrutura ATT&CK®. Esta ferramenta não substitui o ATT&CK®, mas sim um recurso adicional.
+
+### Questões:
+
+- a. ***For the above analytic, what is the pseudocode a representation of?*** *Splunk search*
+
+Para responder questão basta acessar o link da [CAR-2020-09-001](https://car.mitre.org/analytics/CAR-2020-09-001/). A resposta é seção após Pseudocódigo.
+
+- b. ***What tactic has an ID of TA0003?*** *Persistence*
+
+Na questão B, pode-se utilizar a busca do site MITRE ATT&CK.
+
+- c. ***What is the name of the library that is a collection of Zeek (BRO) scripts?*** *BZAR*
+
+Para responder a questão ***c***, basta a acessar a página principal CAR.
+
+- d. ***What is the name of the technique for running executables with the same hash and different names?*** *Masquerading*
+
+Para responder a aquestão ***d***, basta acessar a Full List de análises.
+
+- e. ***Examine CAR-2013-05-004, besides Implementations, what additional information is provided to analysts to ensure coverage for this technique?*** *Unit Tests*
