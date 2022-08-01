@@ -168,3 +168,52 @@ Para responder a questão ***c***, basta a acessar a página principal CAR.
 Para responder a aquestão ***d***, basta acessar a Full List de análises.
 
 - e. ***Examine CAR-2013-05-004, besides Implementations, what additional information is provided to analysts to ensure coverage for this technique?*** *Unit Tests*
+
+## Task 5 - MITRE Engage 
+
+De acordo com o site oficial "*MITRE Engage é uma estrutura para planejar e discutir operações de engajamento de adversários que permite que você engaje seus adversários e atinja suas metas de segurança cibernética.*" - Tradução direta.
+
+O MITRE Engage é considerado uma Abordagem de Engajamento Adversário. Isso é realizado pela implementação de **Cyber Denial** e **Cyber Deception**.
+
+Com o **Cyber Denial** impedimos a capacidade do adversário de conduzir suas operações e com o **Cyber Deception** plantamos intencionalmente artefatos para enganar o adversário.
+
+O site Engage fornece um [started kit](https://engage.mitre.org/starter-kit/) para se possa 'começar' com a Abordagem de Engajamento Adversário (Adversary Engagement Approach). O starter kit é uma coleção de whitepapers e PDFs que explicam várias listas de verificação, metodologias e processos para você começar.
+
+Assim como o MITRE ATT&CK, o Engage possui sua própria matriz. Abaixo está um visual da ***Engage Matrix***.
+
+![Engage Matrix](images/engage-matrix.png)
+
+Abaixo um breve descrição das categorias, de acordo com site Engage Matrix:
+
+- **Prepare**: Conjunto de ações operacionais que levará a um resultado desejado (input).
+- **Expose**: Quando adversários acionam atividades de Cyber Deception implantadas.
+- **Affect**: Quando os adversário executam ações que geram impacto negativo em suas operações.
+- **Elicit**: Informações obtidas observando o adversário, aprende-se mais sobre seu modus operandi (TTPs).
+- **Understand**: Resultados das ações operacionais (output).
+
+Para obter mais informações, acesseo [Engage Handbook](https://engage.mitre.org/wp-content/uploads/2022/04/EngageHandbook-v1.0.pdf).
+
+É possível acessar e interagir com a [Engage Matrix Explorer](https://engage.mitre.org/matrix). Pode-se filtrar por informações do [MITRE ATT&CK](https://attack.mitre.org/).
+
+Ao acessar a Engage Matrix Explore, observe que, por padrão, a matriz se concentra em ***Operate***, que envolve ***Expose***, ***Affect*** e ***Elicit***.
+
+![Explore - Engage Matrix](images/engage-matrix2b.png)
+
+Pode-se clicar em ***Prepare*** ou ***Understand*** se desejar se concentrar apenas nessa parte da matriz.
+
+![Explore Engage Matrix 2](images/engage-matrix3.gif)
+
+
+### Questões:
+
+- a. ***Under Prepare, what is ID SAC0002?*** *Persona Creation*
+- b. ***What is the name of the resource to aid you with the engagement activity from the previous question?*** *Persona Profile Worksheet*
+
+Para responder a questão b, a dica foi acessar Tools > All tools
+
+- c. ***Which engagement activity baits a specific response from the adversary?*** *Lures*
+
+- d. ***What is the definition of Threat Model?*** *A risk assessment that models organizational strengths and weaknesses* 
+
+As respostas podem ser obtidas explorando a matriz de engagamento.
+
