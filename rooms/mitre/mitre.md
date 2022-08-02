@@ -308,4 +308,8 @@ Para responder a questão ***a***, basta acessar a página de grupos do MITRE AT
 
 - e. ***What platforms does the technique from question #2 affect?*** *Azure AD, Google Workspace, IaaS, Office 365, SaaS*
 
+## Task 9 - Conclusion
 
+Nesta room, explorou-se ferramentas/recursos que o MITRE fornece à comunidade de segurança. O objetivo da room era expor esses recursos e fornecer um conhecimento básico de seus usos. Muitos fornecedores de produtos de segurança e equipes de segurança em todo o mundo consideram essas contribuições da MITRE inestimáveis ​​nos esforços diários para impedir o mal. Quanto mais informações tivermos como defensores, melhor estaremos equipados para revidar. Alguns de vocês podem estar procurando fazer a transição para se tornarem analistas de SOC, engenheiros de detecção, analistas de ameaças cibernéticas etc. Essas ferramentas/recursos são essenciais.
+
+Como mencionado anteriormente, porém, isso não é apenas para os defensores. Como red teamers, essas ferramentas/recursos também são úteis. Seu objetivo é imitar o adversário e tentar contornar todos os controles existentes no ambiente. Com esses recursos, como o red teamer, você pode imitar efetivamente um verdadeiro adversário e comunicar suas descobertas em uma linguagem comum que ambos os lados possam entender. Em poucas palavras, isso é conhecido como purple teaming.
