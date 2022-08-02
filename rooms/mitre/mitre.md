@@ -247,5 +247,44 @@ Para responder as questões basta navegar pelas opções do site D3FEND.
 
 - b. ***In D3FEND Inferred Relationships, what does the ATT&CK technique from the previous question produces?*** *Outbound Internet Network Traffic*
 
+## Task 7 - ATT&CK® Emulation Plans 
+
+Se essas ferramentas fornecidas pela MITRE não forem suficientes, em [MITRE ENGENUITY](https://mitre-engenuity.org/), temos o CTID, a Biblioteca de Emulação de Adversário (***Adversary Emulation Library***) e os Planos de Emulação (***Emulation Plans***) ATT&CK®.
+
+### CTID
+
+MITRE formou uma organização chamada de **Center of Threat-Informed Defense (CTID)**. Essa organização consiste em várias companhias e fornecedores ao redor do mundo. O objetivo dela é conduzir pesquiss em ameaças cibernéticas e seus TTPs, compartilhando as pesquisas para melhorar a defesa cibernética de todos.
+
+Algumas das companhias e fornecedores que participam do CTID:
+- AttackIQ (fundadora)
+- Verizon
+- Microsoft (fundadora)
+- Red Canary (fundadora)
+- Splunk
+
+De acordo com o website oficial "*Juntamente com as organizações participantes, cultivamos soluções para um mundo mais seguro e avançamos na defesa sobre ameaças informadas com software, metodologias e estruturas de código aberto. Ao expandir a base de conhecimento do MITRE ATT&CK, nosso trabalho expande a compreensão global dos adversários cibernéticos e seus ofícios com a divulgação pública de conjuntos de dados críticos para entender melhor o comportamento do adversário e seus movimentos*". Tradução direta.
+
+### Adversary Emulation Library & ATT&CK® Emulations Plans
+
+A [Adversary Emulation Library](https://medium.com/mitre-engenuity/introducing-the-all-new-adversary-emulation-plan-library-234b1d543f6b) é uma biblioteca pública que possibilita a planos de emulação de adversários de forma gratuita para utilização por blue e red teamers. A biblioteca e as emulações são oriundas de contribuições do CTID. Existem muitas [ATT&CK Emulation Plans](https://github.com/center-for-threat-informed-defense/adversary_emulation_library) disponíveis, como: [APT3](https://attack.mitre.org/resources/adversary-emulation-plans/), [APT29](https://github.com/center-for-threat-informed-defense/adversary_emulation_library/tree/master/apt29) e [FIN6](https://github.com/center-for-threat-informed-defense/adversary_emulation_library/tree/master/fin6). Os planos de emulação são um guia passo a passo de como imitar um grupo de ameaça específico.
+
+Se algum membro do C-Suite perguntasse: "como nos sairíamos se o APT29 nos atingisse?" Isso pode ser facilmente respondido consultando os resultados da execução do plano de emulação.
+
+### Questões:
+
+- a. ***In Phase 1 for the APT3 Emulation Plan, what is listed first?*** *C2 Setup*
+
+- b. ***Under Persistence, what binary was replaced with cmd.exe?*** *sethc.exe*
+
+Para responder a questão ***b***, acesse o [link](https://attack.mitre.org/docs/APT3_Adversary_Emulation_Plan.pdf)
+
+- c. ***Examining APT29, what  C2 frameworks are listed in Scenario 1 Infrastructure? (format: tool1,tool2)*** *Pupy,Metasploit Framework*
+
+- d. ***What C2 framework is listed in Scenario 2 Infrastructure?*** *PoshC2*
+
+- e. ***Examine the emulation plan for Sandworm. What webshell is used for Scenario 1? Check MITRE ATT&CK for the Software ID for the webshell. What is the id? (format: webshell,id)*** P.A.S.,S0598
+
+Para responder a questão ***e***, acesse o [link](https://attack.mitre.org/groups/G0034/)
+
 
 
