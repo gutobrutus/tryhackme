@@ -286,5 +286,26 @@ Para responder a questão ***b***, acesse o [link](https://attack.mitre.org/docs
 
 Para responder a questão ***e***, acesse o [link](https://attack.mitre.org/groups/G0034/)
 
+## Task 8 - ATT&CK® and Threat Intelligence 
+
+***Threat Intelligence*** (TI) ou ***Cyber Threat Intelligence*** (CTI) são informações ou TTPs atribuidas a um adversário. Ao utilizar threat intelligence, como defensores, pode-se tomar melhores decisões em relação à estratégia defensiva. Em grandes companhias podem existir equipes internas com o objetivo de reunir informações sobre threat intelligence para as demais equipes da organização, além de usar informações sobre ameaças já disponíveis. Algumas informações sobre ameaças são opensource. Outras são por meio de assinaturas com fornecedores, como o CrowdStrike.
+
+Por outro lado, muitos defensores usam vários papéis (funções) em algumas organizações e precisam dedicar um tempo de suas outras tarefas para se concentrar na inteligência de ameaças. Para atender a este último, trabalharemos em um cenário de uso do ATT&CK® para inteligência de ameaças. O objetivo da inteligência de ameaças é tornar as informações acionáveis.
+
+**Cenário**: Você é um analista de segurança que trabalha no setor de aviação. Sua organização está migrando sua infraestrutura para a nuvem. Seu objetivo é usar a Matriz ATT&CK® para coletar inteligência de ameaças em grupos APT que possam ter como alvo esse setor específico e usar técnicas direcionadas às suas áreas de preocupação. Você está verificando se existem lacunas na cobertura. Depois de selecionar um grupo, examine as informações do grupo selecionado e suas táticas, técnicas, etc.
+
+### Questões:
+
+- a. ***What is a group that targets your sector who has been in operation since at least 2013?*** *APT33*
+
+Para responder a questão ***a***, basta acessar a página de grupos do MITRE ATT&CK, mais especificamente o grupo do [link](https://attack.mitre.org/groups/G0064/)
+
+- b. ***As your organization is migrating to the cloud, is there anything attributed to this APT group that you should focus on? If so, what is it?*** *Cloud Accnouts*
+
+- c. ***What tool is associated with the technique from the previous question?*** *Ruler*
+
+- d. ***Per the detection tip, what should you be detecting? (format: phrase1 or phrase2)*** *Abnormal or malicious behavior*
+
+- e. ***What platforms does the technique from question #2 affect?*** *Azure AD, Google Workspace, IaaS, Office 365, SaaS*
 
 
