@@ -19,6 +19,8 @@ Repositório com notas de resolução de rooms do tryhackme.
     - [Resolução](rooms/kenobi/kenobi.md)
 - [Linux PrivEsc](https://tryhackme.com/room/linuxprivesc)   
     - [Resolução](rooms/linuxprivesc/linuxprivesc.md)
+- [MITRE](https://tryhackme.com/room/mitre)  
+    - [Resolução](rooms/mitre/mitre.md)
 - [Nessus](https://tryhackme.com/room/rpnessusredux)  
     - [Resolução](rooms/nessus/nessus.md)
 - [Steel Mountain](https://tryhackme.com/room/steelmountain)  
