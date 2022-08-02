@@ -6,7 +6,7 @@ A room discutirá os vários recursos que o MITRE disponibilizou para a comunida
 
 ## Task 1 - Introduction to MITRE
 
-Para iniciantes em Cybersecurity, talvez nunca se ouviu falar em [MITRE](https://attack.mitre.org/), talvez tenha apenas falar sobre MITRE em relação a lista de CVEs ([Common Vulnerabilities and Exposures](https://cve.mitre.org/)). Mas a MITRE pesquisa em muitas áreas, fora da segurança cibernética. Essas áreas incluem inteligência artificial, informática em saúde, segurança espacial, apenas alguns exemplos.
+Para iniciantes em Cybersecurity, talvez nunca tenham ouvido falar em [MITRE](https://attack.mitre.org/), talvez tenha apenas visto algo sobre MITRE em relação a lista de CVEs ([Common Vulnerabilities and Exposures](https://cve.mitre.org/)). Mas a MITRE pesquisa em muitas áreas, fora da segurança cibernética. Essas áreas incluem inteligência artificial, informática em saúde, segurança espacial, apenas alguns exemplos.
 
 De acordo com o próprio site oficial do MITRE: *No MITRE, resolvemos problemas para um mundo mais seguro. Por meio de nossos centros de P&D financiados pelo governo federal e parcerias público-privadas, trabalhamos em todo o governo para enfrentar os desafios à segurança, estabilidade e bem-estar de nossa nação.*
 
@@ -215,5 +215,37 @@ Para responder a questão b, a dica foi acessar Tools > All tools
 
 - d. ***What is the definition of Threat Model?*** *A risk assessment that models organizational strengths and weaknesses* 
 
-As respostas podem ser obtidas explorando a matriz de engagamento.
+As respostas podem ser obtidas explorando a matriz de engajamento.
+
+## Task 6 - MITRE D3FEND
+
+### D3FEND
+
+Que recurso é esse no MITRE? De acordo com site [D3FEND](https://d3fend.mitre.org/), trata-se de uma representação gráfica sobre conhecimentos sobre contramedidas de cybersecurity.
+
+O D3FEND ainda está em beta, sendo financiado pela diretoria de cybersecurity da NSA. 
+
+O D3FEND significa Detection, Denial e Disruption Framework Empowering Network Defense. Durante a criação dessa room no tryhackme, existem 408 artefatos na matriz D3FEND.
+
+![D3FEND Matrix](images/d3fend-matrix.png)
+
+Para ilustrar, clique na matriz D3FEND no artefato ***Decoy File***:
+
+![Decoy File](images/decoy-file2.png)
+
+Serão exibidas várias informações sobre o item clicado, como definião, como funciona, considerações e exemplos.
+
+Percebe-se que assim como outros recursos MITRE, é possível filtrar baseado na matriz ATT&CK.
+
+Como o D3FEND ainda está em beta, é provável que passe por muitas mudanças ainda.
+
+### Questões:
+
+Para responder as questões basta navegar pelas opções do site D3FEND.
+
+- a. ***What is the first MITRE ATT&CK technique listed in the ATT&CK Lookup dropdown?*** *Data Obfuscation*
+
+- b. ***In D3FEND Inferred Relationships, what does the ATT&CK technique from the previous question produces?*** *Outbound Internet Network Traffic*
+
+
 
