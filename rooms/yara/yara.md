@@ -312,11 +312,11 @@ O pesquisador de segurança da informação "fr0gger_" criou e compartilhou no m
 
 Frameworks como [Cuckoo](https://cuckoosandbox.org/) ou [Python PE Modules](https://pypi.org/project/pefile/) podem ser utilizados com Yara, extendendo as possibilidades das rules.
 
-## 7.2 - Cuckoo
+### 7.2 - Cuckoo
 
 Cuckoo Sandbox é um ambiente automatizado de análise de malware. Este módulo permite gerar regras Yara com base nos comportamentos descobertos no Cuckoo Sandbox. Como esse ambiente executa malware, você pode criar regras sobre comportamentos específicos, como strings de tempo de execução e similares.
 
-## 7.3 - Python PE
+### 7.3 - Python PE
 
 O módulo PE do Python permite que você crie regras Yara a partir de várias seções e elementos da estrutura do Windows Portable Executable (PE).
 
@@ -328,3 +328,126 @@ Examinar o conteúdo de um arquivo PE é uma técnica essencial na análise de m
 
 - a. ***Sounds pretty cool!*** *Não há necessidade resposta*
 
+## Task 8 - Other tools and Yara
+
+### 8.1 - Ferramentas Yara (Yara tools)
+
+Saber como criar uma rule Yara customizada é útil, mas felizmente não é preciso criar muitas regras do zero para começar a usar o Yara para procurar pelo "mal". Existe muitos recursos disponíveis no [Github](https://github.com/InQuest/awesome-yara) e ferramentas open source (além de algumas comerciais) que podem ser utilizadas para aproveitar Yara em operações de caça e/ou respostas a incidentes.
+
+#### LOKI (O que, não quem, é Loki?)
+
+LOKI é um ***IOC*** (Indicator of Compromise) scanner Open source free, criado por Florian Roth. [Link no Github](https://github.com/Neo23x0/Loki).
+
+Um IOC (Inticator of Compromise - Indicador de comprometimento) é um artefato forense observado em uma rede ou sistema operacional que, com alta confiança, indica uma intrusão.
+
+De acordo com a página do github, a detecção baseia-se em 4 métodos:
+
+1.  Checagem IOC baseada em nome de arquivo (file name)
+2.  Checagem com Rule Yara
+3.  Checagem baseada em hash
+4.  Checagem de conexão de volta - C2 
+
+***C2***: Infraestrutura de comando e controle. Trata-se de um conjunto de programas usados para se comunicar com uma máquina alvo/vítima. Comparável a um shell reverso, mas é mais avançado que isso, geralmente se comunica por meio de protocolos de rede comuns como HTTP, HTTPS e DNS.
+
+Existem checagens adicionais que podem ser feitas com LOKI. Para mais informações basta consultar o Readme na página do projeto no Github.
+
+LOKI pode ser usado em sistemas Windows e Linux. Em ambientes Windows, deve-se realizar o download do [binário](https://github.com/Neo23x0/Loki/releases) que vai poder ser executado tanto em sistems 32 como 64 bits. Para ambientes Linux, pode ser feito o download no mesmo link.
+
+![Loki scanner em execução](images/loki1.png)
+
+### THOR (programas nomeados com nome de super-herói para super-herói de blue team
+
+***THOR Lite*** é o mais novo scanner IOC e YARA multiplataforma. Possui versões pré-compiladas para Windows, Linux e MacOS. Um bom recurso com o THOR Lite é a limitação de varredura para limitar os recursos exaustivos da CPU. Para obter mais informações e/ou realizar o dowload, basta acessar o [site](https://www.nextron-systems.com/thor-lite/). É necessário realizar uma subscrição na mailing list para obter uma cópia do binário. É importante notar que existe o THOR para clientes corporativos e o THOR lite é a versão free.
+
+![Thor em execução](images/thor1.png)
+
+### FENRIR (nomeclatura baseada e mitologia)
+
+É a terceira ferramenta criada por Neo23x0 (Florian Roth), [link](https://github.com/Neo23x0/Fenrir), assim como as duas anteriores citadas (LOKI e THOR). A versão atualizada foi criada para resolver o problema de seus antecessores, onde os requisitos devem ser atendidos para que funcionem. Fenrir é um script bash; ele será executado em qualquer sistema capaz de executar o bash (atualmente até o Windows).
+
+![Fenrir em execução](images/fenrir1.png)
+
+### YAYA (Yet Another Yara Automation)
+
+YAYA foi criado pela [Electronic Frontier Foundation - EFF](https://www.eff.org/deeplinks/2020/09/introducing-yaya-new-threat-hunting-tool-eff-threat-lab), sendo lançada em setembro de 2020. De acordo com o website oficial do projeto: "*YAYA é uma nova ferramenta de código aberto para ajudar os pesquisadores a gerenciar vários repositórios de regras YARA. O YAYA começa importando um conjunto de regras YARA de alta qualidade e, em seguida, permite que os pesquisadores adicionem suas próprias regras, desativem conjuntos de regras específicos e executem verificações de arquivos.*"
+
+Atualmente, YAYA só roda em ambientes Linux.
+
+![YAYA em execução](images/yaya1.png)
+
+### Questões:
+
+- a. ***Cool tools. I'm ready to use one of them.*** *Não há necessidade de resposta*
+
+## Task 9 - Using LOKI and its Yara rule set
+
+### 9.1 - Usando LOKI
+
+Se você é um analista de segurança, vai necessitar realizar pesquisas em várias fontes como relatórios de inteligência de ameaças (threat intelligence reports), postagens em blogs especializados, etc, coletando informações sobre táticas e técnicas mais recentes ou mesmo antigas que são utilizadas. Normalmente nessas leituras, IOCs (hashes, ips, nomes de domínio, etc) são compartilhados de modo a proporcionar a criação de rules para detectar as ameaças em seu ambiente, assim como também as rules Yara.
+
+Por outro lado, você pode se deparar em uma situação em que encontrou algo desconhecido, que sua pilha de ferramentas de segurança não pode/não detectou. Usando ferramentas como o Loki, você precisará adicionar suas próprias regras com base em suas coletas de inteligência de ameaças ou descobertas de um envolvimento de resposta a incidentes (forense).
+
+Conforme já mencionado, Loki já possui um conjunto de rules Yara que podemos utilizar como ponto de partida em busca de ameaças no terminal.
+
+Na VM sugerida na task 4, navegue até o diteório Loki que está dentro do **~/tools**:
+
+![Acessando o diretório que contém o Loki](images/loki2.png)
+
+**Nota**: Para demonstrar a utilização, está sendo considerado o uso da VM da task 4.
+
+Para executar o Loki e visualizar o help, basta executar: 
+
+```shell
+python loki.py -h
+```
+
+Se estiver executando o Loki em seu próprio sistema, primeiro execute com a opção **--update**:
+
+```shell
+python loki.py --update
+```
+Após rodar o comando acima, será criado o diretório ***signature-base***, que é utilizado pelo Loki nos scans, ou seja, é onde tem as assinaturas de ameaças conhecidas. Na VM da task 4, esse comando já foi executado.
+
+![Sitnatures do Loki](images/loki3.png)
+
+Acesse o diretório e liste o conteúdo. Vários arquivos Yara que podem ser usados com o Loki.
+
+Para executar o Loki, você pode usar o seguinte comando (observe que estou chamando o Loki de dentro do diretório do file 1), na VM da task 4:
+
+![Executando o Loki](images/loki4.png)
+
+**Cenário**: Você é o analista de segurança de um escritório de advocacia de médio porte. Um colega de trabalho descobriu arquivos suspeitos em um servidor da Web em sua organização. Esses arquivos foram descobertos durante a execução de atualizações no site corporativo. Os arquivos foram copiados para sua máquina para análise. Os arquivos estão localizados no diretório ***suspicious-files***. Use o Loki para responder às perguntas abaixo.
+
+### Questões:
+
+- a. ***Scan file 1. Does Loki detect this file as suspicious/malicious or benign?*** *suspicious*
+
+A resposta é exibida ao término da execução do comando indicato mais acima.
+
+- b. ***What Yara rule did it match on?***  *webshell_metaslsoft*
+
+- c. ***What does Loki classify this file as?*** *Web Shell*
+
+- d. ***Based on the output, what string within the Yara rule did it match on?*** *Str1*
+
+- e. ***What is the name and version of this hack tool?*** *b374k 2.2*
+
+- f. ***Inspect the actual Yara file that flagged file 1. Within this rule, how many strings are there to flag this file?*** *1*
+
+- g. ***Scan file 2. Does Loki detect this file as suspicious/malicious or benign?*** benign
+
+Para responder essa questão, deve-se executar novamente o loki, considerando a VM da task 4, assim:
+
+```shell
+cmnatic@thm-yara:~/suspicious-files/file2$ python ../../tools/Loki/loki.py -p .
+```
+Ou seja, dentro do diretório ***~/suspicious-files/file2***, executa-se o Loki.
+
+- h. ***Inspect file 2. What is the name and version of this web shell?*** *b374k 3.2.3*
+
+Para responder essa questão, pode-se executar o comando:
+
+```shell
+head -n 20 index.php
+```
+Ou seja, exibir as 20 primeiras linhas do arquivo.
