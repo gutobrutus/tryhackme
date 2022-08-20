@@ -25,5 +25,7 @@ Repositório com notas de resolução de rooms do tryhackme.
     - [Resolução](rooms/nessus/nessus.md)
 - [Steel Mountain](https://tryhackme.com/room/steelmountain)  
     - [Resolução](rooms/steelmountain/steelmountain.md)
+- [Yara](https://tryhackme.com/room/yara)  
+    - [Resolução](rooms/yara/yara.md)
 - [Wireshark 101](https://tryhackme.com/room/wireshark)  
     - [Resolução](rooms/wireshark101/wireshark101.md)
