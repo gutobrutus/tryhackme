@@ -451,3 +451,173 @@ Para responder essa questão, pode-se executar o comando:
 head -n 20 index.php
 ```
 Ou seja, exibir as 20 primeiras linhas do arquivo.
+
+## Task 10 - Creating Yara rules with yarGen 
+
+### 10.1 - Criando rules Yara com yarGen
+
+Na seção anterior, percebemos que temos um arquivo que o Loki não sinalizou. Neste ponto, não podemos executar o Loki em outros servidores web porque se o file 2 existir em qualquer um dos servidores web, ele não será detectado.
+
+É necessário, portanto, criar uma regra Yara para detectar esse web shell específico em nosso ambiente. Normalmente é isso que é feito no caso de um incidente, que é um evento que afeta/impacta a organização de forma negativa.
+
+Podemos abrir o arquivo manualmente e tentar filtrar linhas e mais linhas de código para encontrar possíveis strings que possam ser usadas em nossa regra Yara que será criada.
+
+O arquivo file 2, possui muitas linhas. Pode-se contar as linhas com o comando:
+
+```shell
+strings ARQUIVO | wc -l
+```
+Ou seja, no cenário da VM da task 4:
+
+```shell
+cd ~/suspicious-files/file2
+strings 1ndex.php | wc -l
+```
+Saída:
+```shell
+3580
+```
+
+Se tentar visualizar cada string line do arquivo manualmente, perceberá que será uma tarefa árdua. Isso pode ser feito, por exemplo, com o comando less:
+
+```shell
+less 1ndex.php
+```
+![Leitura do conteúdo do arquivo 1ndex.php](images/yara9.png)
+
+Por sorte, pode-se utilizar yarGen (outra ferramenta criada por Florian Roth) para nos ajudar na tarefa desta task.
+
+O que é yarGen? É um gerador de rules Yara.
+
+Link do projeto no [github](https://github.com/Neo23x0/yarGen).
+
+De acordo com o próprio arquivo README do projeto "*O princípio principal é a criação de regras yara a partir de strings encontradas em arquivos de malware enquanto remove todas as strings que também aparecem em arquivos goodware. Portanto, o yarGen inclui um grande banco de dados de strings de goodware e opcode como arquivos ZIP que devem ser extraídos antes do primeiro uso.*" - Tradução direta.
+
+Para utilizar o yarGen, após realizar um git clone do projeto que está no github, acessar o diretório yarGen e executar o comando abaixo para atualizar a base:
+
+```shell
+python3 yarGen.py --update
+```
+![Update yarGen](images/yara10.png)
+
+Isso irá atualizar a lista de good-opcodes e good-strings no BD local, a partir do repositório online do projeto.
+
+![Atualização da base yarGen concluída](images/yara11.png)
+
+Agora, pode-se executar o comando abaixo para gerar uma rule Yara para o File 2:
+
+```shell
+python3 yarGen.py -m /home/cmnatic/suspicious-files/file2 --excludegood -o /home/cmnatic/suspicious-files/file2.yar
+```
+
+Esclarecendo o comando anterior:
+
+- **-m** indica o path de arquivos que se deseja criar uma rule Yara.
+- **--excludegood** foçar a exclusão de goodware strings (eliminação de falsos positivos)
+- **-o** indica a localização e nome do arquivo de rule Yara que será gerado.
+
+Ao finalizar a geração, a saída final será como abaixo:
+
+![Geração de rule Yara](images/yara12b.png)
+
+Geralmente, examinaria-se a regra Yara e removeria quaisquer strings que pudessem gerar falsos positivos. Para este exercício, deixou-se a regra Yara gerada como está e testaremos para ver se o Yara sinalizará o arquivo 2 ou não.
+
+**Nota**: Outra ferramenta criada para auxiliar nisso é chamada [yarAnalyzer](https://github.com/Neo23x0/yarAnalyzer/) (também criada por Florian Roth). Essa ferramenta permite analisar suas rules Yara criadas por conta própria ou mesmo pelo yarGen.
+
+Algumas sugestões de leitura sobre o yarGen:
+
+- https://www.bsk-consulting.de/2015/02/16/write-simple-sound-yara-rules/
+- https://www.bsk-consulting.de/2015/10/17/how-to-write-simple-but-sound-yara-rules-part-2/
+- https://www.bsk-consulting.de/2016/04/15/how-to-write-simple-but-sound-yara-rules-part-3/
+
+### Questões:
+
+- a. ***From within the root of the suspicious files directory, what command would you run to test Yara and your Yara rule against file 2?*** *yara file2.yar file2/1ndex.php*
+
+Para responder a questão, considerando que está usando a VM da task 4, deve-se está dentro do diretório ~/suspicious-files
+
+- b. ***Did Yara rule flag file 2? (Yay/Nay)*** Yay
+
+- c. ***Copy the Yara rule you created into the Loki signatures directory.*** *Não há necessidade de resposta*
+
+Estando dentro do diretório ***~/suspicious-files*** da VM - Task 4:
+```shell
+cp file2.yar ../tools/Loki/signature-base/yara/
+```
+
+- d. ***Test the Yara rule with Loki, does it flag file 2? (Yay/Nay)*** *Yay*
+
+Para responder, primeiro acessa-se o diretório ***~/suspicious-files/file2/***.  Depois executa-se:
+
+```shell
+python ../../tools/Loki/loki.py -p .
+```
+
+- e. ***What is the name of the variable for the string that it matched on?*** Zepto
+
+Para responder, no output do comando loki, basta ir na linha **MATCHES** procurar por **var**.
+
+- f. ***Inspect the Yara rule, how many strings were generated?*** 20
+
+Basta visualizar o conteúdo do arquivo file2.yar que foi gerado.
+
+- g. ***One of the conditions to match on the Yara rule specifies file size. The file has to be less than what amount?*** 700kb 
+
+Essa resposta está no arquivo de rule gerado.
+
+## Task 12 - Valhalla
+
+### 12.1 - Valhalla
+
+Valhalla é um serviço online Yara, criado e disponibilizado por Nextron-Systems. De acordo com o [website](https://www.nextron-systems.com/valhalla/): *VALHALLA aumenta seus recursos de detecção com o poder de milhares de regras YARA de alta qualidade feitas à mão.* - Tradução direta.
+
+![Valhalla Website](images/yara13.png)
+
+Valhalla pode ser acessado de algumas formas, por exemplo, por sua API ou mesmo através da web no link: https://valhalla.nextron-systems.com/
+
+A partir da imagem acima, devemos denotar que podemos realizar pesquisas com base em uma palavra-chave, tag, técnica ATT&CK, sha256 ou nome de regra.
+
+Dando uma olhada nos dados fornecidos a nós, vamos examinar a primeira regra listada no feed (a partir desta data de entrada).
+
+![Feed Valhalla](images/yara14.png)
+
+Observa-se o nome da regra, uma breve descrição, um link de referência para obter mais informações sobre a regra, juntamente com a data da regra.
+
+Retomando nosso cenário, neste ponto, sabe-se que os 2 arquivos estão relacionados. Mesmo que Loki tenha classificado os arquivos como suspeitos, pode-se ter o sentimento que eles são maliciosos. Daí a razão pela qual se criou uma regra Yara usando yarGen para detectá-la em outros servidores da web. Mas vamos fingir ainda que você não é conhecedor de código (FYI - nem todos os profissionais de segurança sabem como codificar / script ou lê-lo). Logo, é preciso realizar mais pesquisas sobre esses arquivos para receber aprovação para erradicar esses arquivos da rede.
+
+Hora de usar Valhalla para alguma coleta de inteligência de ameaças, respondendo as questões.
+
+### Questões:
+
+- a. ***Enter the SHA256 hash of file 1 into Valhalla. Is this file attributed to an APT group? (Yay/Nay)*** Yay
+
+Para responder a questão, na saída do Loki, é exibida a hash. Basta adicionar essa hash no campo de query do Valhalla para obter a resposta.
+
+
+
+![Hash query no Valhalla](images/hash256_query.png)
+
+- b. ***Do the same for file 2. What is the name of the first Yara rule to detect file 2?*** *Webshell_b374k_rule1*
+
+Mesmo procedimento feito pra responder a questão a, porém agora no arquivo file2.
+
+- c. ***Examine the information for file 2 from Virus Total (VT). The Yara Signature Match is from what scanner?*** *THOR APT Scanner*
+
+Para responder a questão, basta acessar o virustotal e pesquisar pela hash.
+
+- d. ***Enter the SHA256 hash of file 2 into Virus Total. Did every AV detect this as malicious? (Yay/Nay)*** Nay
+
+- e. ***Besides .PHP, what other extension is recorded for this file?*** *exe*
+
+Na aba datails do resultado da pesquisa no virus total, é possível localizar a resposta.
+
+- f. ***What JavaScript library is used by file 2?*** *zepto*
+
+O link do github https://github.com/b374k/b374k é obtido a partir da pesquisa feita no Valhalla. Basta acessar o repositório e inspecionar o conteúdo do arquivo index.php para obter a resposta.
+
+![zepto.js](images/zepto_js.png)
+
+- g. ***Is this Yara rule in the default Yara file Loki uses to detect these type of hack tools? (Yay/Nay)*** *Nay*
+
+
+
